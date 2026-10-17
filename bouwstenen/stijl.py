@@ -8,7 +8,8 @@ Regels van de stijl
 - Symbolen volgens Binas (Europees): weerstand = rechthoek, lamp = cirkel met kruis (zie symbolen.py).
 - Tempo: SNEL / NORMAAL / TRAAG voor run_time, PAUZE na elke nieuwe stap.
 - Getallen met decimale komma: waarde("U", 6, "V") geeft U = 6,0 V; komma() in zelf geschreven formules.
-- Stroom (pijltjes) loopt van + naar −; elektronen andersom.
+- Stroom (witte pijltjes) loopt van + naar −; elektronen (gele bolletjes) andersom; water (blauw) zoals de stroom.
+  Q_KLEUR is de kleur van de letter Q in formules, niet van de elektronen.
 """
 import re
 
@@ -44,9 +45,28 @@ TITEL, KOP, LABEL, KLEIN, FORMULE = 48, 36, 28, 22, 44
 STREEP = 4      # symbolen
 LENGTE = 1.2    # lengte van elk symbool, aansluitdraadjes meegerekend
 
+DRAAD_DIKTE = 3 # alle draden: schema's, 3D-kringen, meetdraadjes
+MAATLAT_DIKTE = 4
+
+# ── Stroom, elektronen, water ──────────────────────────────────────────────
+PIJL_KLEUR = WIT
+PIJL_VOOR, PIJL_ACHTER, PIJL_BREED = 0.08, 0.05, 0.06  # stroompijltje: punt vóór het midden, achterkant, halve breedte
+ELEKTRON_KLEUR = GEEL   # elektronen: kleine gele bolletjes
+WATER_KLEUR = BLAUW     # water: blauwe bolletjes (stroomt andersom dan de elektronen, net als de stroom)
+DEELTJE_STRAAL = 0.03
+
+# ── Brandende lamp ─────────────────────────────────────────────────────────
+GLOED_STRAAL, GLOED_RINGEN, GLOED_DEKKING = (0.35, 1.0), 8, 0.08    # 2D: zachte ringen om het lampsymbool
+HALO_STRAAL, HALO_LAGEN, HALO_DEKKING = (0.35, 1.0), 10, 0.09       # 3D: bollen om de peer
+LAMPLICHT = 5                                                       # 3D: sterkte van het licht uit de peer
+
+# ── Panelen (vast in beeld) ────────────────────────────────────────────────
+PANEEL_DEKKING = 0.9
+
 # ── 3D-materiaal: de witte, doorschijnende, belichte stof van lamp, batterij, pomp en waterrad ──
 MAT_DOORZICHT = 0.35
 MAT_RUW = 0.5
+RAND_DIKTE = 2  # randlijnen van 3D-modellen
 
 # ── Tempo ──────────────────────────────────────────────────────────────────
 SNEL, NORMAAL, TRAAG, PAUZE = 0.5, 1.0, 2.0, 1.0
@@ -61,6 +81,19 @@ m.config.background_color = BG
 def mat(mob, opacity=MAT_DOORZICHT, kleur=WIT, ruw=MAT_RUW, metaal=0.0):
     """Kleur + materiaal: het object wordt belicht door de lampen in de scène."""
     return mob.set_fill(kleur, opacity).set_stroke(width=0).set_material(m.Material(metallic=metaal, roughness=ruw))
+
+
+def pijlhoeken(plek, richting):
+    """De drie hoeken van een stroompijltje op plek, wijzend in richting (eenheidsvector in het xy-vlak)."""
+    q = np.array([-richting[1], richting[0], 0])
+    return [plek + PIJL_VOOR * richting, plek - PIJL_ACHTER * richting + PIJL_BREED * q,
+            plek - PIJL_ACHTER * richting - PIJL_BREED * q]
+
+
+def lampgloed(midden, sterkte=1.0):
+    """Zachte gele ringen om een brandend lampsymbool (2D); teken hem net onder het symbool."""
+    return m.VGroup(*(m.Circle(radius=r, stroke_width=0).set_fill(LICHT, GLOED_DEKKING * (1 - i / GLOED_RINGEN) * sterkte)
+                      for i, r in enumerate(np.linspace(*GLOED_STRAAL, GLOED_RINGEN)))).move_to(midden)
 
 
 # ── Tekst ──────────────────────────────────────────────────────────────────

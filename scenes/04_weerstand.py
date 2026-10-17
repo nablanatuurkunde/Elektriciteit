@@ -91,12 +91,12 @@ class Weerstand(Les):
             til_op(mob)
         til_op(lamp_s, zicht_lamp)
         maskers = [MASKER_BRON, MASKER_LAMP]
-        pijlen = maskeer(lus_pijltjes_3d(tempo, naar_3d), maskers, m.ValueTracker(1))
+        pijlen = maskeer(lus_pijltjes(tempo, naar_3d), maskers, m.ValueTracker(1))
         yv = -HALF - 0.55
         vm_plat = plaats(meter("V"), [0.3, yv, Z], [1.1, yv, Z]).scale(0.7)
         a, b = [pool_a(vm_plat)[0], -HALF, Z], [pool_b(vm_plat)[0], -HALF, Z]
-        meting = m.VGroup(vm_plat, draad(pool_a(vm_plat), a).set_stroke(WIT, 3),
-                          draad(pool_b(vm_plat), b).set_stroke(WIT, 3), knoop(a), knoop(b))
+        meting = m.VGroup(vm_plat, draad(pool_a(vm_plat), a),
+                          draad(pool_b(vm_plat), b), knoop(a), knoop(b))
         aflezing = paneel(waarde("U", 0, "V", decimalen=0), hoek=m.UR)
         self.hud(aflezing)
         self.add(bron_s, lamp_s, sch["min_"], sch["plus"], pijlen, meting)

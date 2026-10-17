@@ -19,7 +19,7 @@ VOET = 0.75                           # straal van de lampvoet: daar komen de dr
 
 def lijn(*punten_xy):
     """Draad plat op tafel door de punten (x, y)."""
-    return draad(*([x, y, Z] for x, y in punten_xy)).set_stroke(WIT, 3)
+    return draad(*([x, y, Z] for x, y in punten_xy))
 
 
 def schema_symbolen():
@@ -31,8 +31,7 @@ def schema_symbolen():
 
 def schemagloed(lamp_s):
     """Zachte platte halo net onder het lampsymbool."""
-    return m.VGroup(*(m.Circle(radius=r, stroke_width=0, fill_color=LICHT, fill_opacity=0.08 * (1 - i / 8))
-                      for i, r in enumerate(np.linspace(0.35, 1.0, 8)))).move_to(lamp_s[2]).shift(-0.01 * m.OUT)
+    return lampgloed(lamp_s[2].get_center() - 0.01 * m.OUT)
 
 
 # ── De rondgang ────────────────────────────────────────────────────────────
@@ -82,19 +81,19 @@ def stromer(groep, tempo, zet, richting=1):
 
 def deeltjes(kleur, tempo, richting, afstand=0.3):
     """Kleine bolletjes (onzichtbaar bij de start), gelijkmatig over de hele kring, met snelheid tempo (ValueTracker)."""
-    g = m.Group(*(m.Sphere(radius=0.03, resolution=(8, 4)).set_fill(kleur, 0).set_stroke(width=0)
+    g = m.Group(*(m.Sphere(radius=DEELTJE_STRAAL, resolution=(8, 4)).set_fill(kleur, 0).set_stroke(width=0)
                   for _ in range(int(LUS.lengte / afstand))))
     return stromer(g, tempo, lambda bol, s: bol.move_to(LUS.punt(s)), richting)
 
 
 def elektronen_in_kring(tempo, afstand=0.3):
     """Gele elektronen: van de − pool door de lamp naar de + pool."""
-    return deeltjes(GEEL, tempo, 1, afstand)
+    return deeltjes(ELEKTRON_KLEUR, tempo, 1, afstand)
 
 
 def waterdeeltjes(tempo, afstand=0.3):
     """Blauw water: stroomt andersom dan de elektronen, net als de (conventionele) stroom: + → lamp → −."""
-    return deeltjes(BLAUW, tempo, -1, afstand)
+    return deeltjes(WATER_KLEUR, tempo, -1, afstand)
 
 
 # ── Maskeren: pijltjes vervagen onder een symbool ─────────────────────────
@@ -137,19 +136,16 @@ def maskeer(groep, maskers, zicht, rand=0.05):
     return groep
 
 
-def lus_pijltjes(tempo, afstand=0.6):
-    """Witte driehoekjes die van + door de lamp naar − trekken (andersom dan de elektronen)."""
-    pijlen = m.VGroup(*(m.Triangle(fill_color=WIT, fill_opacity=0, stroke_width=0).scale(0.09).rotate(-m.PI / 2)
-                        for _ in range(int(LUS.lengte / afstand))))  # Triangle wijst omhoog; nu naar rechts
-    for p in pijlen:
-        p.hoek = 0.0
+def lus_pijltjes(tempo, naar_3d=lambda q: q, afstand=0.6):
+    """Stroompijltjes die van + door de lamp naar − trekken (andersom dan de elektronen).
+    naar_3d(punt) zet een punt van het platte schema op zijn plek in 3D: in de hoogte-kring kantelen ze mee."""
+    pijlen = m.VGroup(*(m.VMobject().set_fill(PIJL_KLEUR, 0).set_stroke(width=0)
+                        for _ in range(int(LUS.lengte / afstand))))
 
     def zet(p, s):
         a, b = LUS.punt(s), LUS.punt(s - 1e-3)  # richting -1: op weg naar kleinere s
-        h = m.angle_of_vector(b - a)
-        p.rotate(h - p.hoek)
-        p.hoek = h
-        p.move_to(a)
+        hoeken = pijlhoeken(a, (b - a) / np.linalg.norm(b - a))
+        p.set_points_as_corners([naar_3d(q) for q in hoeken + hoeken[:1]])
     return stromer(pijlen, tempo, zet, richting=-1)
 
 
@@ -170,8 +166,6 @@ def schema(met_meter=False):
     else:
         min_s = draad(pool_b(bron_s), [L, -H, Z], [R, -H, Z], pool_a(lamp_s))
         symbolen = m.VGroup(bron_s, lamp_s)
-    for x in (min_s, plus_s):
-        x.set_stroke(WIT, 3)
     return dict(symbolen=symbolen, gloed=schemagloed(lamp_s), labels=m.VGroup(*labels), min_=min_s, plus=plus_s)
 
 
@@ -206,24 +200,10 @@ def til(p, t):
     return p + t * (hoogte_vorm(p) - p)
 
 
-def lus_pijltjes_3d(tempo, naar_3d, afstand=0.6):
-    """Witte driehoekjes (+ → lamp → −) die de hoogte volgen: op de helling kantelen ze mee.
-    naar_3d(punt) zet een punt van het platte schema op zijn plek in 3D."""
-    pijlen = m.VGroup(*(m.VMobject().set_fill(WIT, 0).set_stroke(width=0) for _ in range(int(LUS.lengte / afstand))))
-
-    def zet(p, s):
-        a, b = LUS.punt(s), LUS.punt(s - 1e-3)  # op weg naar kleinere s
-        d = (b - a) / np.linalg.norm(b - a)
-        n = np.array([-d[1], d[0], 0])
-        hoeken = [a + 0.08 * d, a - 0.05 * d + 0.06 * n, a - 0.05 * d - 0.06 * n]
-        p.set_points_as_corners([naar_3d(q) for q in hoeken + hoeken[:1]])
-    return stromer(pijlen, tempo, zet, richting=-1)
-
-
 def hoogte_maatlat(x, y, tekst_, kleur=U_KLEUR, links=False):
     """Verticale lat van hoogte 0 tot H met streepjes en een staand label: het hoogteverschil U."""
     lat = m.VGroup(m.Line([x, y, Z], [x, y, Z + H]),
-                   *(m.Line([x - 0.1, y, z], [x + 0.1, y, z]) for z in (Z, Z + H))).set_stroke(kleur, 4)
+                   *(m.Line([x - 0.1, y, z], [x + 0.1, y, z]) for z in (Z, Z + H))).set_stroke(kleur, MAATLAT_DIKTE)
     lbl = tekst(tekst_, LABEL, kleur).rotate(m.PI / 2, m.RIGHT)  # rechtop, naar de camera (−y)
     lbl.move_to([x + (-0.35 if links else 0.35), y, Z + H / 2])
     return m.VGroup(lat, lbl)

@@ -84,7 +84,7 @@ class Transformator(Les):
                               for y in (SPOEL_Y, -SPOEL_Y)),  # sluit aan op de spoeluiteinden (op kernhoogte)
                             *(draad([POOL_X, y, KERN_Z], [POOL_X + 0.3, y, Z], [RECHTS, y, Z],
                                     [RECHTS, 0.18 * np.sign(y), Z])
-                              for y in (SPOEL_Y, -SPOEL_Y))).set_stroke(WIT, 3)
+                              for y in (SPOEL_Y, -SPOEL_Y)))
         self.set_camera_orientation(phi=62 * m.DEGREES, theta=-58 * m.DEGREES, zoom=1.15, frame_center=[0, 0, 0.3])
         omtrek = m.always_redraw(lambda: m.VGroup(*(d.omtrek(self.camera.get_theta()) for d in lamp3d)))
         drie_d = [de_kern, prim, sec, contact, draden3d, *(d.vlak for d in lamp3d), *(d.ringen for d in lamp3d)]
@@ -134,7 +134,7 @@ class Transformator(Les):
         draden2d = m.VGroup(*(draad(pool, [-POOL_X, y, Z]) for pool, y in ((pool_a(bron_s), SPOEL_Y),
                                                                             (pool_b(bron_s), -SPOEL_Y))),
                             *(draad([POOL_X, y, Z], pool) for pool, y in ((pool_a(lamp_s), SPOEL_Y),
-                                                                          (pool_b(lamp_s), -SPOEL_Y)))).set_stroke(WIT, 3)
+                                                                          (pool_b(lamp_s), -SPOEL_Y))))
         labels = m.VGroup(label("230 V", bron_s, m.LEFT, size=LABEL, kleur=TEKST),
                           label("primair", trafo_s[0], m.UP, size=LABEL, kleur=TEKST),
                           label("secundair", trafo_s[2], m.UP, size=LABEL, kleur=TEKST))

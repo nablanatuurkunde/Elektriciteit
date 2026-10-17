@@ -84,7 +84,7 @@ class Waterkring(Les):
                                       *(b.animate.set_fill(opacity=1) for b in w)], run_time=d)  # elektronen → water
         rad, p = waterrad(tempo), pomp(tempo)
         tabel = kaart("lamp  →  waterrad", "batterij  →  pomp", "draden  →  buizen",
-                      tekst("elektronen  →  water", LABEL, t2c={"elektronen": GEEL, "water": BLAUW}))
+                      tekst("elektronen  →  water", LABEL, t2c={"elektronen": ELEKTRON_KLEUR, "water": WATER_KLEUR}))
         d = zeg(self, "De lamp is een waterrad,")
         halo.clear_updaters()
         self.play(weg(lamp_delen), m.FadeOut(halo), m.FadeIn(rad), *self.toon(tabel[1], tabel[0][0]), run_time=d)
@@ -160,8 +160,6 @@ class Waterkring(Les):
         # zelfde looprichting als de 3D-draden (min_: − → lamp, plus: lamp → +), anders zwiept de Transform om
         min_s = draad(pool_b(bron_s), [LINKS, -HALF, Z], [RECHTS, -HALF, Z], pool_a(lamp_s))
         plus_s = draad(pool_b(lamp_s), [RECHTS, HALF, Z], [LINKS, HALF, Z], pool_a(bron_s))
-        for x in (min_s, plus_s):
-            x.set_stroke(WIT, 3)
         for x in (*s["lamp_delen"], *s["bat_delen"], s["halo"], s["elektronen"]):
             x.clear_updaters()  # always_redraw-omtrek, gloed en stroming stoppen voor het vervagen
 

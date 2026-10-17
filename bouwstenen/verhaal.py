@@ -42,7 +42,7 @@ def paneel(*inhoud, hoek=m.UL):
     """Inhoud op een (bijna) dekkend vlak met rand, vast in beeld: leesbaar, ook boven de kring.
     paneel[0] is het vlak, paneel[1] de regels: zo kunnen ze apart verschijnen."""
     groep = m.VGroup(*inhoud).arrange(m.DOWN, aligned_edge=m.LEFT, buff=0.25)
-    vlak = m.SurroundingRectangle(groep, buff=0.25, corner_radius=0.12).set_stroke(GEDEMPT, 2).set_fill(BG, 0.9)
+    vlak = m.SurroundingRectangle(groep, buff=0.25, corner_radius=0.12).set_stroke(GEDEMPT, 2).set_fill(BG, PANEEL_DEKKING)
     return m.VGroup(vlak, groep).to_corner(hoek, buff=0.5)  # vlak eerst: tekst ligt erbovenop
 
 

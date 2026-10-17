@@ -97,8 +97,7 @@ class Schakeling:
                 kleur = 0.55 * min(hl / 0.2, 1) + 0.45 * hl  # brandt hij, dan duidelijk geel; vloeiend vanaf 0 (geen sprong)
                 sym[2].set_fill(m.interpolate_color(m.ManimColor(BG), m.ManimColor(LICHT), kleur), 1)
                 if hl > 0 and t < 1:  # zachte gloed om een brandende lamp, alleen in 2D (eronder getekend)
-                    groep.add(m.VGroup(*(m.Circle(radius=r, stroke_width=0).set_fill(LICHT, 0.08 * (1 - i / 8) * hl * (1 - t))
-                                         for i, r in enumerate(np.linspace(0.35, 0.95, 8)))).move_to(C - [0, 0, 0.005]))
+                    groep.add(lampgloed(C - [0, 0, 0.005], hl * (1 - t)))
             groep.add(sym)
             if c["soort"] == "lamp":
                 if c["kapot"].get_value() > 0:
@@ -116,7 +115,7 @@ class Schakeling:
                 vervaag(groep, zc)
             delen.append(groep.apply_function(lambda p, c=c: self.vorm(p, c, t)))
         for punten, V in self.draden:
-            delen.append(draad(*(self.in_3d(xy(*q), V, t) for q in punten)).set_stroke(WIT, 3))
+            delen.append(draad(*(self.in_3d(xy(*q), V, t) for q in punten)))
         for q, V in self.knopen:
             delen.append(knoop(self.in_3d(xy(*q), V, t)))
         geheel = m.Group(*delen)
@@ -171,7 +170,7 @@ def stroompijltjes(sch, routes, aandelen, I, aan):
     I: ValueTracker met de stroom uit de batterij; 0 laat alles stilstaan."""
     Lmax = max(r.L for r in routes)
     pool = int(Lmax / V_PIJL * max(I.get_value(), 1e-9) / Q_PIJL) + 4
-    pijlen = m.VGroup(*(m.VMobject().set_fill(WIT, 0).set_stroke(width=0) for _ in range(pool)))
+    pijlen = m.VGroup(*(m.VMobject().set_fill(PIJL_KLEUR, 0).set_stroke(width=0) for _ in range(pool)))
     pijlen.T = 0.0
     dt_vast = Q_PIJL / I.get_value()  # uitzendritme ligt vast; stilzetten gaat via de klok (I → 0)
 
@@ -189,8 +188,7 @@ def stroompijltjes(sch, routes, aandelen, I, aan):
                 continue
             plek, richting, V, zicht = r.plek(s)
             plek = plek + [0, 0, t * K * V]
-            q = np.array([-richting[1], richting[0], 0])
-            hoeken = [plek + 0.08 * richting, plek - 0.05 * richting + 0.06 * q, plek - 0.05 * richting - 0.06 * q]
+            hoeken = pijlhoeken(plek, richting)
             p.set_points_as_corners(hoeken + hoeken[:1])
             p.set_fill(opacity=zicht * aan[j].get_value() * sch.zicht.get_value())
     I0 = I.get_value()
@@ -209,7 +207,7 @@ def maatlat(c, tekst_, kant):
     lat = m.VGroup(m.Line([*voet[:2], z0], [*voet[:2], z1]),
                    *(m.Line([*(voet - 0.1 * a)[:2], z], [*(voet + 0.1 * a)[:2], z]) for z in (z0, z1)))
     lbl = tekst(tekst_, LABEL, U_KLEUR).rotate(m.PI / 2, m.RIGHT).move_to([*(voet + 0.5 * n)[:2], (z0 + z1) / 2])
-    return m.VGroup(lat.set_stroke(U_KLEUR, 4), lbl)
+    return m.VGroup(lat.set_stroke(U_KLEUR, MAATLAT_DIKTE), lbl)
 
 
 # ── Vaste kringen ──────────────────────────────────────────────────────────

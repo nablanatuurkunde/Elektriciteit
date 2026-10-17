@@ -16,14 +16,14 @@ def stroommeter3d():
     """Kastje in de voorste leiding, met een wijzerplaat en een A erop."""
     c = np.array([METER_X, -HALF, 0.1])
     kast = mat(m.Prism(dimensions=[0.5, 0.32, 0.2])).move_to(c)
-    plaat = m.Circle(radius=0.11).set_stroke(WIT, 2).move_to(c + [0, 0, 0.101])
+    plaat = m.Circle(radius=0.11).set_stroke(WIT, RAND_DIKTE).move_to(c + [0, 0, 0.101])
     letter = tekst("A", LABEL).scale(0.6).move_to(c + [0, 0, 0.102])
     return m.Group(kast, plaat, letter)
 
 
 def telvlak():
     """Denkbeeldig vlak dwars op de voorste leiding (normaal langs x); flitst als er een deeltje doorheen gaat."""
-    v = m.Square(side_length=0.45).set_fill(WIT, 0.12).set_stroke(WIT, 2)
+    v = m.Square(side_length=0.45).set_fill(WIT, 0.12).set_stroke(WIT, RAND_DIKTE)
     v.rotate(m.PI / 2, m.UP).move_to([METER_X, -HALF, Z])
     v.flits = 0.0
 

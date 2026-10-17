@@ -134,7 +134,7 @@ def plaats(sym, p, q):
 
 
 def draad(*punten):
-    return m.VMobject().set_points_as_corners([np.array(p, float) for p in punten]).set_stroke(DRAAD, STREEP)
+    return m.VMobject().set_points_as_corners([np.array(p, float) for p in punten]).set_stroke(DRAAD, DRAAD_DIKTE)
 
 
 def tak(p, q, sym):
@@ -185,4 +185,4 @@ def pijltjes_langs(punten, snelheid=1.0, afstand=0.6):
 
 def elektronen_langs(punten, snelheid=1.0, afstand=0.35):
     """Elektronen langs hetzelfde pad, tegen de stroomrichting in."""
-    return _stroming(punten, lambda: m.Dot(radius=0.06, color=Q_KLEUR), snelheid, afstand, terug=True)
+    return _stroming(punten, lambda: m.Dot(radius=0.06, color=ELEKTRON_KLEUR), snelheid, afstand, terug=True)

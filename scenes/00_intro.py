@@ -57,7 +57,7 @@ def zwerm(n, rng, straal=1.4, drift=0.06):
     def punt():
         r, a = straal * np.sqrt(rng.uniform()), rng.uniform(0, m.TAU)
         return [rng.uniform(-7, 7), r * np.cos(a), r * np.sin(a)]
-    e = m.Group(*(m.Sphere(radius=0.06, resolution=(8, 4)).set_fill(Q_KLEUR, 1).set_stroke(width=0).move_to(punt()) for _ in range(n)))
+    e = m.Group(*(m.Sphere(radius=0.06, resolution=(8, 4)).set_fill(ELEKTRON_KLEUR, 1).set_stroke(width=0).move_to(punt()) for _ in range(n)))
 
     def beweeg(g, dt):
         for d in g:
@@ -161,7 +161,7 @@ class Intro(m.ThreeDScene):
 
         # Eén elektron volgen, op een routekaartje van schakelaar naar lamp
         d = zeg(self, "Dan blijkt dat een elektron dat bij de schakelaar vertrekt, er meer dan tien uur over doet om bij de lamp te komen.")
-        volg = m.Sphere(radius=0.12, resolution=(12, 6)).set_fill(Q_KLEUR, 1).set_stroke(width=0).move_to([-1, 0.3, 0.3])
+        volg = m.Sphere(radius=0.12, resolution=(12, 6)).set_fill(ELEKTRON_KLEUR, 1).set_stroke(width=0).move_to([-1, 0.3, 0.3])
         volg.add_updater(lambda v, dt: v.shift(0.05 * dt * m.RIGHT + rng.normal(0, 0.06 * np.sqrt(dt), 3)))
         ring = mat(m.Torus(major_radius=0.3, minor_radius=0.025, resolution=(24, 8)), 1, ACCENT, 0.4)
         ring.add_updater(lambda r: r.move_to(volg))
@@ -170,7 +170,7 @@ class Intro(m.ThreeDScene):
         kaart.arrange(m.RIGHT, buff=0).move_to(3.45 * m.UP)
         kaart.add(label("schakelaar", kaart_s, m.LEFT), label("lamp", kaart_l, m.RIGHT))
         uren = m.ValueTracker(0)
-        stip = m.Dot(radius=0.09, color=Q_KLEUR).add_updater(
+        stip = m.Dot(radius=0.09, color=ELEKTRON_KLEUR).add_updater(
             lambda s: s.move_to(kaart[1].point_from_proportion(min(uren.get_value() / 11, 1))))
         hud(kaart, stip)
         self.move_camera(frame_center=volg, zoom=1.4, added_anims=[m.FadeIn(volg), m.FadeIn(ring), m.FadeIn(kaart)],
@@ -199,7 +199,7 @@ class Intro(m.ThreeDScene):
         vraag = tekst("Hoe kan de lamp meteen aan,\nals elektronen zo traag zijn?", KOP + 4)
         rand = kader(vraag)
         rechtop(m.VGroup(vraag, rand))
-        diepte = m.Group(*(m.Sphere(radius=0.05, resolution=(8, 4)).set_fill(Q_KLEUR, 0.6).set_stroke(width=0)
+        diepte = m.Group(*(m.Sphere(radius=0.05, resolution=(8, 4)).set_fill(ELEKTRON_KLEUR, 0.6).set_stroke(width=0)
                            .move_to([rng.uniform(-9, 9), rng.uniform(2, 10), rng.uniform(-5, 5)]) for _ in range(80)))
         diepte.add_updater(lambda g, dt: g.shift(0.04 * dt * m.RIGHT))
         self.set_camera_orientation(phi=86 * m.DEGREES, theta=-96 * m.DEGREES, zoom=1, frame_center=m.ORIGIN)

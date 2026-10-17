@@ -25,7 +25,7 @@ class Draaivorm:
         mat(self.vlak, opacity)
         knikken = range(len(r)) if randen is None else randen
         self.ringen = m.VGroup(*(m.Circle(radius=r[i]).move_to(self.plaats + [0, 0, z[i]])
-                                 for i in knikken if r[i] > 0)).set_stroke(WIT, 2)
+                                 for i in knikken if r[i] > 0)).set_stroke(WIT, RAND_DIKTE)
 
     def omtrek(self, theta):
         """De twee zijlijnen die de camera (op hoek theta rond de z-as) als rand van de vorm ziet."""
@@ -33,7 +33,7 @@ class Draaivorm:
         punt = lambda i, kant: self.plaats + kant * self.r[i] * opzij + [0, 0, self.z[i]]
         return m.VGroup(*(m.Line(punt(i, kant), punt(i + 1, kant)) for kant in (-1, 1)
                           for i in range(len(self.r) - 1) if self.z[i] != self.z[i + 1]  # vlakke bodems: dat zijn de ringen al
-                          )).set_stroke(WIT, 2)
+                          )).set_stroke(WIT, RAND_DIKTE)
 
 
 def aa_batterij(plaats):
@@ -75,7 +75,7 @@ class LiggendeBatterij:
         r, z = self.d.r, self.d.z
         punt = lambda i, kant: self.plaats + [0, z[i], 0] + kant * r[i] * opzij
         return m.VGroup(*(m.Line(punt(i, kant), punt(i + 1, kant)) for kant in (-1, 1)
-                          for i in range(len(r) - 1) if z[i] != z[i + 1])).set_stroke(WIT, 2)
+                          for i in range(len(r) - 1) if z[i] != z[i + 1])).set_stroke(WIT, RAND_DIKTE)
 
 
 def opstelling():
@@ -86,7 +86,7 @@ def opstelling():
         d.vlak.shift(RECHTS * m.RIGHT)
         d.ringen.shift(RECHTS * m.RIGHT)
     beugel = m.VGroup(*(m.Line([RECHTS, 0, 3.3], [RECHTS + 0.9 * np.cos(a), 0.9 * np.sin(a), 4.5])
-                        for a in np.arange(0, m.TAU, m.TAU / 3))).set_stroke(WIT, 2)
+                        for a in np.arange(0, m.TAU, m.TAU / 3))).set_stroke(WIT, RAND_DIKTE)
     lamp3d[3].vlak.set_material(None)  # peer altijd onbelicht (eigen kleur), ook vóór hij gloeit: geen sprong
     return lamp3d, beugel, LiggendeBatterij([LINKS, -BAT_HALF, Z])
 
@@ -96,14 +96,14 @@ def gloeiende_peer(lamp3d, g):
     peer, midden = lamp3d[3].vlak, np.array([RECHTS, 0, 3.65])
     licht = m.PointLight(midden, LICHT, intensity=0, radius=6)
     halo = m.Group(*(m.Sphere(midden, radius=r, resolution=(24, 12)).set_fill(LICHT, 0).set_stroke(width=0)
-                     for r in np.linspace(0.35, 1.0, 10)))
+                     for r in np.linspace(*HALO_STRAAL, HALO_LAGEN)))
 
     def gloei(h):
         v = g.get_value()
         peer.set_fill(m.interpolate_color(m.ManimColor(WIT), m.ManimColor(LICHT), v), 0.35 + 0.65 * v)
         for i, bol in enumerate(h):
-            bol.set_fill(opacity=v * 0.09 * (1 - i / len(h)))
-        licht.intensity = 5 * v
+            bol.set_fill(opacity=v * HALO_DEKKING * (1 - i / len(h)))
+        licht.intensity = LAMPLICHT * v
     halo.add_updater(gloei)
     return licht, halo
 
@@ -120,7 +120,7 @@ def waterrad(tempo):
                          .rotate(k * m.TAU / 8, m.RIGHT, about_point=c) for k in range(8)))
     as_ = mat(m.Cylinder(radius=0.04, height=0.5, direction=m.RIGHT)).move_to(c)
     randen = m.VGroup(*(m.Circle(radius=straal).rotate(m.PI / 2, m.UP).move_to(c + [dx, 0, 0])
-                        for dx in (-0.15, 0.15))).set_stroke(WIT, 2)
+                        for dx in (-0.15, 0.15))).set_stroke(WIT, RAND_DIKTE)
     rad = m.Group(schoepen, as_, randen)
     # water langs de rechterkant stroomt naar -y; de onderkant van het rad gaat mee (draaien om +x duwt die naar +y)
     rad.add_updater(lambda r, dt: r.rotate(-2.5 * tempo.get_value() * dt, m.RIGHT, about_point=c))
@@ -136,7 +136,7 @@ def pomp(tempo):
     c = np.array([LINKS, 0, Z])
     huis = mat(m.Cylinder(radius=0.2, height=0.5, direction=m.UP), opacity=0.2).move_to(c)
     randen = m.VGroup(*(m.Circle(radius=0.2).rotate(m.PI / 2, m.RIGHT).move_to(c + [0, dy, 0])
-                        for dy in (-0.25, 0.25))).set_stroke(WIT, 2)
+                        for dy in (-0.25, 0.25))).set_stroke(WIT, RAND_DIKTE)
     lengte, slagen = 0.44, 1.5
     k = m.TAU * slagen / lengte
     blad = m.Surface(lambda r, y: c + [r * np.cos(k * y), y, r * np.sin(k * y)],

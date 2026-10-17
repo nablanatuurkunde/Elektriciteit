@@ -30,7 +30,7 @@ def stroom_variabel(sch, route, I, zicht, I_max=1.5):
     deel I / I_max zichtbaar. Gaat de stroom aan, dan lopen ze dus meteen overal, niet vanaf de batterij.
     Bij (bijna) geen stroom staan ze stil en vervagen ze."""
     n = int(route.L / (V_PIJL * Q_PIJL / I_max))  # zoveel pijltjes passen er bij de grootste stroom
-    pijlen = m.VGroup(*(m.VMobject().set_fill(WIT, 0).set_stroke(width=0) for _ in range(n)))
+    pijlen = m.VGroup(*(m.VMobject().set_fill(PIJL_KLEUR, 0).set_stroke(width=0) for _ in range(n)))
     pijlen.s = 0.0
     # Elk pijltje een vaste drempel (van-der-Corputreeks: 0, ½, ¼, ¾, …). Bij stroom I zijn de pijltjes met
     # drempel < I / I_max zichtbaar: altijd gelijkmatig gespreid, en bij minder stroom verdwijnen ze één voor één
@@ -47,8 +47,7 @@ def stroom_variabel(sch, route, I, zicht, I_max=1.5):
                 p.set_fill(opacity=0)
                 continue
             plek, r, _, z = route.plek((g.s + k * route.L / n) % route.L)
-            q = np.array([-r[1], r[0], 0])
-            hoeken = [plek + 0.08 * r, plek - 0.05 * r + 0.06 * q, plek - 0.05 * r - 0.06 * q]
+            hoeken = pijlhoeken(plek, r)
             p.set_points_as_corners(hoeken + hoeken[:1])
             p.set_fill(opacity=aan * z * zicht.get_value() * sch.zicht.get_value() * np.clip(i / 0.05, 0, 1))
     pijlen.add_updater(schuif)

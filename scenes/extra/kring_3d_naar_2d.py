@@ -43,8 +43,8 @@ class Kring3DNaar2D(m.ThreeDScene):
 
         # Schema op dezelfde plek, plat in het xy-vlak: bron links (+ naar boven, zoals de batterij), lamp rechts
         bron_s, lamp_s = schema_symbolen()
-        plus_s = draad(pool_a(bron_s), [LINKS, HALF, Z], [RECHTS, HALF, Z], pool_b(lamp_s)).set_stroke(WIT, 3)
-        min_s = draad(pool_b(bron_s), [LINKS, -HALF, Z], [RECHTS, -HALF, Z], pool_a(lamp_s)).set_stroke(WIT, 3)
+        plus_s = draad(pool_a(bron_s), [LINKS, HALF, Z], [RECHTS, HALF, Z], pool_b(lamp_s))
+        min_s = draad(pool_b(bron_s), [LINKS, -HALF, Z], [RECHTS, -HALF, Z], pool_a(lamp_s))
 
         omtrek.clear_updaters()
         halo.clear_updaters()

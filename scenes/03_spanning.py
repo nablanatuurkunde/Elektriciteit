@@ -23,7 +23,7 @@ class Spanning(Les):
         sch = schema(met_meter=True)
         bron_s, lamp_s, meter_s = sch["symbolen"]
         maskers = [MASKER_BRON, MASKER_LAMP, MASKER_METER]
-        pijlen = maskeer(lus_pijltjes_3d(tempo, lambda q: til(q, opgetild.get_value())), maskers, m.ValueTracker(1))
+        pijlen = maskeer(lus_pijltjes(tempo, lambda q: til(q, opgetild.get_value())), maskers, m.ValueTracker(1))
         self.add(sch["gloed"], *sch["min_"], sch["plus"], sch["symbolen"], sch["labels"], pijlen)
 
         d = zeg(self, "We gaan verder met onze kring, met de stroommeter erin.")
@@ -59,7 +59,7 @@ class Spanning(Les):
         self.play(m.Indicate(meter_s, color=I_KLEUR), run_time=min(d, 2))
         self.wait(max(d - 2, 0))
         # punt gemaakt: de stroommeter gaat eruit, de voorste draad wordt weer één stuk
-        dicht = draad([METER_X - LENGTE / 2, -HALF, Z], [METER_X + LENGTE / 2, -HALF, Z]).set_stroke(WIT, 3)
+        dicht = draad([METER_X - LENGTE / 2, -HALF, Z], [METER_X + LENGTE / 2, -HALF, Z])
         maskers.remove(MASKER_METER)
         self.play(m.FadeOut(meter_s), m.FadeIn(dicht), run_time=NORMAAL)
 
@@ -75,8 +75,8 @@ class Spanning(Les):
         x_m = RECHTS + 1.3
         vm = staand(plaats(meter("V"), [0, LENGTE / 2, 0], [0, -LENGTE / 2, 0])).scale(0.7).move_to([x_m, 0, Z + H / 2])
         boven, onder = til([RECHTS, 0.8, Z], 1), til([RECHTS, -0.8, Z], 1)  # net voor en net na de lamp
-        draad_boven = draad(pool_a(vm), [x_m, 0, Z + H], [x_m, boven[1], Z + H], boven).set_stroke(WIT, 3)
-        draad_onder = draad(pool_b(vm), [x_m, 0, Z], [x_m, onder[1], Z], onder).set_stroke(WIT, 3)
+        draad_boven = draad(pool_a(vm), [x_m, 0, Z + H], [x_m, boven[1], Z + H], boven)
+        draad_onder = draad(pool_b(vm), [x_m, 0, Z], [x_m, onder[1], Z], onder)
         contacten = m.VGroup(knoop(boven), knoop(onder))
         lat_lamp = hoogte_maatlat(RECHTS + 0.55, 0, "U")
 
@@ -94,7 +94,7 @@ class Spanning(Les):
         yv = -HALF - 0.55
         vm_plat = plaats(meter("V"), [0.3, yv, Z], [1.1, yv, Z]).scale(0.7)  # horizontaal, V leesbaar van boven
         a, b = [pool_a(vm_plat)[0], -HALF, Z], [pool_b(vm_plat)[0], -HALF, Z]  # recht boven de polen
-        draadjes = m.VGroup(draad(pool_a(vm_plat), a), draad(pool_b(vm_plat), b)).set_stroke(WIT, 3)
+        draadjes = m.VGroup(draad(pool_a(vm_plat), a), draad(pool_b(vm_plat), b))
         stuk = m.Line(a, b).set_stroke(U_KLEUR, 6)
         nul = staand(tekst("U = 0 V", LABEL, U_KLEUR)).move_to([(a[0] + b[0]) / 2, -HALF + 0.1, Z + 0.35])
         d = zeg(self, "Meet je tussen twee punten op dezelfde draad, dan is er geen hoogteverschil: "
