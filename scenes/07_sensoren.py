@@ -3,22 +3,18 @@
 Eén kring: batterij (6 V) links, lamp (4 Ω) rechts, en bovenin een vrije plek waar de onderdelen één voor één
 in- en uitvloeien. Het beeld volgt de tekst: steeds staat het besproken onderdeel in de kring, met een zon
 (licht) of thermometer (temperatuur) erbij, en een paneel met de weerstand en de stroom die daaruit volgt
-(I = U / (R + R_lamp)). Stroompijltjes: vaste snelheid, dichtheid = stroom (zoals in serie_parallel.py);
+(I = U / (R + R_lamp)). Stroompijltjes: vaste snelheid, dichtheid = stroom (zoals in 05_serie_parallel.py);
 bij geen stroom staan ze stil en vervagen ze. Voor de LED komt er een weerstand op de plek van de lamp; de LED
 geeft alleen licht als er stroom loopt, en wisselt daarna van kleur (LED's bestaan in allerlei kleuren).
 
-Run vanuit de repo-root:  python -m manimgx render scenes/sensoren.py -o videos/Sensoren.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/07_sensoren.py -o videos/Sensoren.mp4
 """
 import numpy as np
 import manimgx as m
-from stijl import *
-import kring_3d_naar_2d as kr
-import stroom as st
-import serie_parallel as sp  # als modules: anders telt deze file meer dan één scène
+from bouwstenen import *
 
-Z = kr.Z
-U, R_LAMP = sp.U_BRON, sp.R_LAMP          # 6 V, 4 Ω
-XL, XR, YT, YB = sp.XL, sp.XR, sp.YT, sp.YB
+
+U = U_BRON                                # 6 V; de lamp heeft R_LAMP = 4 Ω
 PLEK = ((-0.6, YT), (0.6, YT))            # de vrije plek bovenin, stroom loopt van links naar rechts
 LED_KLEUREN = [ROOD, ORANJE, GEEL, GROEN, BLAUW, WIT]
 
@@ -28,19 +24,12 @@ R_NTC = lambda warm: 20 * 0.1 ** warm             # koud 20 Ω, warm 2 Ω
 R_PTC = lambda warm: 2 * 10 ** warm               # koud 2 Ω, warm 20 Ω
 
 
-def schakelaar_stand(hoek):
-    """Schakelaar met de arm onder een willekeurige hoek (graden): 30 = open, 0 = dicht."""
-    arm = m.Line(0.3 * m.LEFT, 0.3 * m.RIGHT).rotate(hoek * m.DEGREES, about_point=0.3 * m.LEFT)
-    return m.VGroup(m.Line(0.6 * m.LEFT, 0.3 * m.LEFT), m.Line(0.3 * m.RIGHT, 0.6 * m.RIGHT), arm,
-                    m.Dot(0.3 * m.LEFT, radius=0.05), m.Dot(0.3 * m.RIGHT, radius=0.05)).set_stroke(TEKST, STREEP)
-
-
 def stroom_variabel(sch, route, I, zicht, I_max=1.5):
     """Pijltjes van + naar −, vaste snelheid, dichtheid = stroom I (ValueTracker, mag veranderen).
     De hele kring zit al vol met een vaste rij pijltjes (dichtheid bij I_max); daarvan is een gelijkmatig gespreid
     deel I / I_max zichtbaar. Gaat de stroom aan, dan lopen ze dus meteen overal, niet vanaf de batterij.
     Bij (bijna) geen stroom staan ze stil en vervagen ze."""
-    n = int(route.L / (sp.V_PIJL * sp.Q_PIJL / I_max))  # zoveel pijltjes passen er bij de grootste stroom
+    n = int(route.L / (V_PIJL * Q_PIJL / I_max))  # zoveel pijltjes passen er bij de grootste stroom
     pijlen = m.VGroup(*(m.VMobject().set_fill(WIT, 0).set_stroke(width=0) for _ in range(n)))
     pijlen.s = 0.0
     # Elk pijltje een vaste drempel (van-der-Corputreeks: 0, ½, ¼, ¾, …). Bij stroom I zijn de pijltjes met
@@ -50,7 +39,7 @@ def stroom_variabel(sch, route, I, zicht, I_max=1.5):
 
     def schuif(g, dt):
         i = I.get_value()
-        g.s += dt * sp.V_PIJL * np.clip(i / 0.05, 0, 1)   # bij geen stroom: stilstaan
+        g.s += dt * V_PIJL * np.clip(i / 0.05, 0, 1)   # bij geen stroom: stilstaan
         deel = np.clip(i / I_max, 0, 1)
         for k, p in enumerate(g):
             aan = np.clip((deel - drempel[k]) * n, 0, 1)  # het randpijltje vaagt zacht in of uit
@@ -107,40 +96,29 @@ def thermometer(midden, warm, zicht):
     return t
 
 
-class Sensoren(m.ThreeDScene):
+class Sensoren(Les):
     def construct(self):
-        self.add(*kr.zon_en_schemer())
-        hud = self.add_fixed_in_frame_mobjects
-
-        def toon(*mobs):
-            hud(*mobs)
-            return [m.FadeIn(x) for x in mobs]
-
-        def doe(d, *anims, duur=NORMAAL):
-            """Animatie van `duur` seconden, daarna stilstaan tot de zin (d seconden) klaar is."""
-            self.play(*anims, run_time=min(duur, d))
-            self.wait(max(d - duur, 0))
-
+        self.add(*zon_en_schemer())
         self.set_camera_orientation(phi=0, theta=-90 * m.DEGREES, zoom=0.85, frame_center=[2.6, 0, Z],
                                     focal_distance=400)
 
         # ── De kring met een vrije plek bovenin ──
         hoek = m.ValueTracker(30)
-        plek = {naam: sp.onderdeel("anders", *PLEK, U, U, naam, maak=maak, extra=extra)
+        plek = {naam: onderdeel("anders", *PLEK, U, U, naam, maak=maak, extra=extra)
                 for naam, maak, extra in [("schakelaar", lambda: schakelaar_stand(hoek.get_value()), [hoek]),
                                           ("LDR", ldr, []), ("NTC", ntc, []), ("PTC", ptc, []),
                                           ("diode", diode, []), ("LED", led, [])]}
-        plek["diode, omgedraaid"] = sp.onderdeel("anders", PLEK[1], PLEK[0], U, U, "diode, omgedraaid", maak=diode)
-        plek["LED, omgedraaid"] = sp.onderdeel("anders", PLEK[1], PLEK[0], U, U, "LED, omgedraaid", maak=led)
+        plek["diode, omgedraaid"] = onderdeel("anders", PLEK[1], PLEK[0], U, U, "diode, omgedraaid", maak=diode)
+        plek["LED, omgedraaid"] = onderdeel("anders", PLEK[1], PLEK[0], U, U, "LED, omgedraaid", maak=led)
         for naam, c in plek.items():
             c["zicht"].set_value(1 if naam == "schakelaar" else 0)
-        lampje = sp.onderdeel("lamp", (XR, 0.6), (XR, -0.6), U, 0)
-        voor = sp.onderdeel("weerstand", (XR, 0.6), (XR, -0.6), U, 0)  # beschermt de LED (stil in beeld)
+        lampje = onderdeel("lamp", (XR, 0.6), (XR, -0.6), U, 0)
+        voor = onderdeel("weerstand", (XR, 0.6), (XR, -0.6), U, 0)  # beschermt de LED (stil in beeld)
         voor["zicht"].set_value(0)
-        sch = sp.Schakeling([sp.batterij(), lampje, voor, *plek.values()],
+        sch = Schakeling([batterij(), lampje, voor, *plek.values()],
                             [([(XL, 0.6), (XL, YT), PLEK[0]], U), ([PLEK[1], (XR, YT), (XR, 0.6)], U),
                              ([(XR, -0.6), (XR, YB), (XL, YB), (XL, -0.6)], 0)], [])
-        route = sp.Route([((XL, 0.6), U), ((XL, YT), U), (PLEK[0], None), (PLEK[1], U), ((XR, YT), U),
+        route = Route([((XL, 0.6), U), ((XL, YT), U), (PLEK[0], None), (PLEK[1], U), ((XR, YT), U),
                           ((XR, 0.6), None), ((XR, -0.6), 0), ((XR, YB), 0), ((XL, YB), 0), ((XL, -0.6), None)])
 
         # ── Wat er in de kring gebeurt: één regelaar rekent de stroom uit en zet de lamp ──
@@ -156,7 +134,7 @@ class Sensoren(m.ThreeDScene):
             nieuw = I.get_value() + (doel - I.get_value()) * min(1, dt / 0.15)  # zacht, geen sprong
             I.set_value(doel if abs(doel - nieuw) < 1e-3 else nieuw)  # en dan echt tot rust: anders bouwt de kring
             # elk beeld opnieuw op, omdat de lamp steeds een fractie van helderheid verandert
-            lampje["helder"].set_value(sp.helderheid(I.get_value() * R_LAMP) * lampje["zicht"].get_value())
+            lampje["helder"].set_value(helderheid(I.get_value() * R_LAMP) * lampje["zicht"].get_value())
         regelaar.add_updater(regel)
         pijlen = stroom_variabel(sch, route, I, pijl_zicht)
 
@@ -171,7 +149,7 @@ class Sensoren(m.ThreeDScene):
                           f"I = {I.get_value():.2f} A".replace(".", ","))
                 if regels != mob.vorige:
                     mob.vorige = regels
-                    mob.become(st.paneel(*(tekst(r, LABEL) for r in regels), hoek=m.UR))
+                    mob.become(paneel(*(tekst(r, LABEL) for r in regels), hoek=m.UR))
             p.add_updater(bij)
             bij(p)
             return p
@@ -190,7 +168,7 @@ class Sensoren(m.ThreeDScene):
         # ═══ Haakvraag ═══
         d = zeg(self, "Tot nu toe brandde de lamp gewoon zolang de kring dicht was. Maar hoe zet je hem aan en uit? "
                       "En hoe laat je een kring reageren op licht of warmte?")
-        doe(d, sch.zicht.animate.set_value(1))
+        self.doe(d, sch.zicht.animate.set_value(1))
 
         # ═══ Schakelaar ═══
         d = zeg(self, "Het eenvoudigste onderdeel is de schakelaar. Staat hij open, dan is de kring onderbroken: "
@@ -198,23 +176,23 @@ class Sensoren(m.ThreeDScene):
         self.wait(d)
         stand["R"] = lambda: None if hoek.get_value() > 1 else 0.0
         d = zeg(self, "Klap je hem dicht, dan is de kring gesloten. Meteen loopt overal stroom, en de lamp brandt.")
-        doe(d, hoek.animate.set_value(0), duur=NORMAAL)  # de arm klapt dicht; pas als hij dicht is loopt er stroom
+        self.doe(d, hoek.animate.set_value(0), duur=NORMAAL)  # de arm klapt dicht; pas als hij dicht is loopt er stroom
         d = zeg(self, "Weer open: alles stopt. Een schakelaar zet de stroom dus aan of uit, verder niets.")
-        doe(d, hoek.animate.set_value(30), duur=NORMAAL)
+        self.doe(d, hoek.animate.set_value(30), duur=NORMAAL)
 
         # ═══ LDR ═══
         paneel_ldr = waarden_paneel("LDR")
         d = zeg(self, "Nu zetten we op die plek een LDR: een weerstand die gevoelig is voor licht. "
                       "Hoe meer licht erop valt, hoe kleiner zijn weerstand.")
-        doe(d, *wissel("schakelaar", "LDR", lambda: R_LDR(licht.get_value())), zon_zicht.animate.set_value(1),
-            *toon(paneel_ldr))
+        self.doe(d, *wissel("schakelaar", "LDR", lambda: R_LDR(licht.get_value())), zon_zicht.animate.set_value(1),
+            *self.toon(paneel_ldr))
         d = zeg(self, "Voorspel: wat doet de lamp als het donker wordt? Denk even na.")
         self.wait(d + 1.5)
         d = zeg(self, "Het wordt donker: de weerstand van de LDR stijgt, de stroom daalt, en de lamp brandt zwakker.")
-        doe(d, licht.animate.set_value(0), duur=3)
+        self.doe(d, licht.animate.set_value(0), duur=3)
         d = zeg(self, "Komt er weer licht op, dan zakt de weerstand en wordt de lamp weer feller. "
                       "Het symbool: een weerstand met twee pijltjes van licht erop.")
-        doe(d, licht.animate.set_value(1), duur=3)
+        self.doe(d, licht.animate.set_value(1), duur=3)
         d = zeg(self, "Zo'n LDR zit bijvoorbeeld in een straatlantaarn die vanzelf aangaat als het donker wordt.")
         self.wait(d)
 
@@ -224,20 +202,20 @@ class Sensoren(m.ThreeDScene):
         d = zeg(self, "Een NTC reageert niet op licht, maar op temperatuur. Wordt hij warmer, dan daalt zijn "
                       "weerstand. De N staat voor negatief: warmer geeft minder weerstand.")
         self.play(*wissel("LDR", "NTC", lambda: R_NTC(warm.get_value())), zon_zicht.animate.set_value(0),
-                  thermo_zicht.animate.set_value(1), m.FadeOut(paneel_ldr), *toon(paneel_ntc), run_time=NORMAAL)
-        doe(d - NORMAAL, warm.animate.set_value(1), duur=3)
+                  thermo_zicht.animate.set_value(1), m.FadeOut(paneel_ldr), *self.toon(paneel_ntc), run_time=NORMAAL)
+        self.doe(d - NORMAAL, warm.animate.set_value(1), duur=3)
         d = zeg(self, "Je vindt een NTC in thermometers en thermostaten: de stroom vertelt hoe warm het is.")
-        doe(d, warm.animate.set_value(0), duur=3)
+        self.doe(d, warm.animate.set_value(0), duur=3)
 
         # ═══ PTC ═══
         paneel_ptc = waarden_paneel("PTC")
         paneel_ntc.clear_updaters()
         d = zeg(self, "Een PTC doet precies het omgekeerde. De P staat voor positief: warmer geeft juist méér weerstand.")
-        self.play(*wissel("NTC", "PTC", lambda: R_PTC(warm.get_value())), m.FadeOut(paneel_ntc), *toon(paneel_ptc),
+        self.play(*wissel("NTC", "PTC", lambda: R_PTC(warm.get_value())), m.FadeOut(paneel_ntc), *self.toon(paneel_ptc),
                   run_time=NORMAAL)
-        doe(d - NORMAAL, warm.animate.set_value(1), duur=3)
+        self.doe(d - NORMAAL, warm.animate.set_value(1), duur=3)
         d = zeg(self, "Handig als beveiliging: wordt een apparaat te heet, dan remt de PTC de stroom vanzelf af.")
-        doe(d, warm.animate.set_value(0), duur=3)
+        self.doe(d, warm.animate.set_value(0), duur=3)
 
         # ═══ Diode ═══
         paneel_diode = waarden_paneel("diode")
@@ -245,12 +223,12 @@ class Sensoren(m.ThreeDScene):
         d = zeg(self, "Een diode laat de stroom maar in één richting door, zoals een terugslagklep in een waterleiding. "
                       "Staat hij in de doorlaatrichting, dan loopt de stroom gewoon.")
         self.play(*wissel("PTC", "diode", lambda: 0.0), thermo_zicht.animate.set_value(0), m.FadeOut(paneel_ptc),
-                  *toon(paneel_diode), run_time=NORMAAL)
+                  *self.toon(paneel_diode), run_time=NORMAAL)
         self.wait(max(d - NORMAAL, 0))
         d = zeg(self, "Het symbool is een pijl met een streep: de pijl wijst de richting waarin de stroom door mag.")
         self.wait(d)
         d = zeg(self, "Draai je de diode om, dan staat hij in sperrichting: er loopt geen stroom meer.")
-        doe(d, *wissel("diode", "diode, omgedraaid", lambda: None))
+        self.doe(d, *wissel("diode", "diode, omgedraaid", lambda: None))
         d = zeg(self, "Zo beschermt een diode een apparaat als je de batterijen per ongeluk verkeerd om plaatst.")
         self.wait(d)
 
@@ -278,31 +256,31 @@ class Sensoren(m.ThreeDScene):
         self.wait(max(d - NORMAAL, 0))
         d = zeg(self, "Maar net als een gewone diode laat hij de stroom maar in één richting door. "
                       "Draai je hem om, dan loopt er geen stroom, en blijft hij donker.")
-        doe(d, *wissel("LED", "LED, omgedraaid", lambda: None))
+        self.doe(d, *wissel("LED", "LED, omgedraaid", lambda: None))
         d = zeg(self, "De goede kant op: weer stroom, en weer licht.")
-        doe(d, *wissel("LED, omgedraaid", "LED", lambda: 8.0))
+        self.doe(d, *wissel("LED, omgedraaid", "LED", lambda: 8.0))
 
         rij = m.VGroup(*(m.VGroup(*(m.Circle(radius=r, stroke_width=0).set_fill(k, 0.18 * (1 - j / 5))
                                     for j, r in enumerate(np.linspace(0.16, 0.42, 5))),
                                   m.Circle(radius=0.12, stroke_width=0).set_fill(k, 1))
                          for k in LED_KLEUREN)).arrange(m.RIGHT, buff=0.15)
-        kleuren = st.paneel(tekst("LED's in allerlei kleuren", LABEL), rij, hoek=m.UR)
+        kleuren = paneel(tekst("LED's in allerlei kleuren", LABEL), rij, hoek=m.UR)
         d = zeg(self, "LED's bestaan in allerlei kleuren: rood, oranje, geel, groen, blauw. "
                       "En met rood, groen en blauw samen maak je zelfs wit licht, zoals in het scherm van je telefoon.")
-        self.play(*toon(kleuren), run_time=SNEL)
+        self.play(*self.toon(kleuren), run_time=SNEL)
         self.play(kleur.animate.set_value(len(LED_KLEUREN) - 1), run_time=max(d - SNEL, 3), rate_func=m.linear)
         d = zeg(self, "En omdat een LED bijna alle energie omzet in licht, is hij veel zuiniger dan een gloeilamp.")
         self.wait(d)
 
         # ═══ Samenvatting ═══
-        samen = st.paneel(*(tekst(r, LABEL) for r in (
+        samen = paneel(*(tekst(r, LABEL) for r in (
             "schakelaar: kring open of dicht", "LDR: meer licht → kleinere R", "NTC: warmer → kleinere R",
             "PTC: warmer → grotere R", "diode: stroom maar één kant op", "LED: een diode die licht geeft")),
             hoek=m.UR)
         d = zeg(self, "Samengevat:")
         self.play(m.FadeOut(kleuren), run_time=SNEL)
-        hud(samen[0])
-        self.play(m.FadeIn(samen[0]), m.LaggedStart(*(toon(r)[0] for r in samen[1]), lag_ratio=0.3),
+        self.hud(samen[0])
+        self.play(m.FadeIn(samen[0]), m.LaggedStart(*(self.toon(r)[0] for r in samen[1]), lag_ratio=0.3),
                   run_time=max(d, 3))
         zeg(self, "")
         self.wait(3)

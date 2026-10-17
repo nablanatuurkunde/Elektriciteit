@@ -3,20 +3,16 @@
 Assen: x naar rechts, y de diepte in (van de camera af), z omhoog.
 Ondertitels, routekaartje, klok en onderwerpenlijst staan plat op het scherm.
 
-Run vanuit de repo-root:  python -m manimgx render scenes/intro.py -o videos/Intro.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/00_intro.py -o videos/Intro.mp4
 """
 import numpy as np
 import manimgx as m
-from stijl import *
+from bouwstenen import *
+
 
 MUUR_Y = 2.0      # voorkant van de achterwand
 PLAFOND_Z = 3.4
 VLOER_Z = -3.0
-
-
-def mat(mob, kleur, ruw=0.7, metaal=0.0, opacity=1.0):
-    """Kleur + materiaal: het object wordt belicht door de lampen in de scène."""
-    return mob.set_fill(kleur, opacity).set_stroke(width=0).set_material(m.Material(metallic=metaal, roughness=ruw))
 
 
 def rechtop(mob):
@@ -25,33 +21,33 @@ def rechtop(mob):
 
 
 def buis(*punten, dikte=0.035, kleur=WIT):
-    return m.Group(*(mat(m.Line3D(a, b, thickness=dikte), kleur, 0.5) for a, b in zip(punten, punten[1:])))
+    return m.Group(*(mat(m.Line3D(a, b, thickness=dikte), 1, kleur, 0.5) for a, b in zip(punten, punten[1:])))
 
 
 def kamer():
-    vloer = mat(m.Prism(dimensions=[40, 12, 0.1]), GEDEMPT, 0.9).move_to([0, -2.5, VLOER_Z])
-    muur = mat(m.Prism(dimensions=[40, 0.2, 6.6]), WIT, 0.9).move_to([0, MUUR_Y + 0.1, 0.2])
-    plafond = mat(m.Prism(dimensions=[40, 12, 0.1]), WIT, 0.9).move_to([0, -2.5, PLAFOND_Z + 0.05])
-    plaat = mat(m.Prism(dimensions=[0.8, 0.12, 1.2]), WIT, 0.4).move_to([-4.5, MUUR_Y - 0.06, 0])
-    knop = mat(m.Prism(dimensions=[0.26, 0.16, 0.45]), GEDEMPT, 0.4).move_to([-4.5, MUUR_Y - 0.18, -0.2])
+    vloer = mat(m.Prism(dimensions=[40, 12, 0.1]), 1, GEDEMPT, 0.9).move_to([0, -2.5, VLOER_Z])
+    muur = mat(m.Prism(dimensions=[40, 0.2, 6.6]), 1, WIT, 0.9).move_to([0, MUUR_Y + 0.1, 0.2])
+    plafond = mat(m.Prism(dimensions=[40, 12, 0.1]), 1, WIT, 0.9).move_to([0, -2.5, PLAFOND_Z + 0.05])
+    plaat = mat(m.Prism(dimensions=[0.8, 0.12, 1.2]), 1, WIT, 0.4).move_to([-4.5, MUUR_Y - 0.06, 0])
+    knop = mat(m.Prism(dimensions=[0.26, 0.16, 0.45]), 1, GEDEMPT, 0.4).move_to([-4.5, MUUR_Y - 0.18, -0.2])
     langs = [[-4.5, MUUR_Y - 0.05, 3.2], [2.5, MUUR_Y - 0.05, 3.2]]  # het stuk van 3 m
     snoer = buis([-4.5, MUUR_Y - 0.05, 0.6], *langs, [2.5, MUUR_Y - 0.05, PLAFOND_Z], [2.5, 0, PLAFOND_Z], [2.5, 0, 1.9])
-    peer = mat(m.Sphere(radius=0.3, resolution=(24, 12)), GEDEMPT, 0.3).move_to([2.5, 0, 1.6])
+    peer = mat(m.Sphere(radius=0.3, resolution=(24, 12)), 1, GEDEMPT, 0.3).move_to([2.5, 0, 1.6])
     return dict(vloer=vloer, muur=muur, plafond=plafond, plaat=plaat, knop=knop, snoer=snoer, peer=peer, langs=langs)
 
 
 def hand3d():
     """Wijsvinger, handpalm en arm; de vinger wijst naar de muur (+y)."""
-    vinger = mat(m.Cylinder(radius=0.07, height=0.6, direction=m.UP), WIT).move_to([0, -0.3, 0])
-    palm = mat(m.Prism(dimensions=[0.55, 0.6, 0.3]), WIT).move_to([0.05, -0.85, -0.1])
-    arm = mat(m.Cylinder(radius=0.2, height=4, direction=m.UP), WIT).move_to([0.05, -3.1, -0.15])
+    vinger = mat(m.Cylinder(radius=0.07, height=0.6, direction=m.UP), 1, WIT, 0.7).move_to([0, -0.3, 0])
+    palm = mat(m.Prism(dimensions=[0.55, 0.6, 0.3]), 1, WIT, 0.7).move_to([0.05, -0.85, -0.1])
+    arm = mat(m.Cylinder(radius=0.2, height=4, direction=m.UP), 1, WIT, 0.7).move_to([0.05, -3.1, -0.15])
     return m.Group(vinger, palm, arm)
 
 
 def koperdraad():
     """Uitvergrote draad langs de x-as: doorzichtige isolatie om een rooster van koperionen."""
-    isolatie = mat(m.Cylinder(radius=1.7, height=16, direction=m.RIGHT, show_ends=False), GEDEMPT, 0.4, opacity=0.18)
-    ionen = m.Group(*(mat(m.Sphere(radius=0.13, resolution=(10, 6)), GEDEMPT, 0.35, metaal=0.9).move_to([x, y, z])
+    isolatie = mat(m.Cylinder(radius=1.7, height=16, direction=m.RIGHT, show_ends=False), 0.18, GEDEMPT, 0.4)
+    ionen = m.Group(*(mat(m.Sphere(radius=0.13, resolution=(10, 6)), 1, GEDEMPT, 0.35, 0.9).move_to([x, y, z])
                       for x in np.arange(-7.2, 7.3, 0.8) for y in (-0.8, 0, 0.8) for z in (-0.8, 0, 0.8)))
     return m.Group(isolatie, ionen)
 
@@ -98,7 +94,7 @@ def nabla_logo():
     formules = m.VGroup(*(rechtop(formule(f, 40)).set_opacity(0.25).move_to(p) for f, p in [
         (r"U = I \cdot R", [-5, 4, 2.4]), (r"P = U \cdot I", [4.5, 4, 2.6]), (r"Q = I \cdot t", [-4, 4, -2.4]),
         (r"E = P \cdot t", [5, 4, -2.2]), (r"R = \rho \frac{l}{A}", [0.5, 4, -2.8]), (r"I = \frac{Q}{t}", [-0.5, 4, 3.0])]))
-    strepen = m.Group(*(mat(m.Prism(dimensions=[0.45, 0.45, 2.4]), k, 0.35).rotate(-25 * m.DEGREES, m.UP)
+    strepen = m.Group(*(mat(m.Prism(dimensions=[0.45, 0.45, 2.4]), 1, k, 0.35).rotate(-25 * m.DEGREES, m.UP)
                         .move_to([-4.2 + 0.75 * i, 0, 0]) for i, k in enumerate([ROOD, ORANJE, GEEL, GROEN, BLAUW])))
     naam = m.VGroup(m.MathTex(r"\nabla", font_size=120, color=TEKST), tekst("Nabla", 80, weight="BOLD"))
     rechtop(naam.arrange(m.RIGHT, buff=0.3)).move_to([1.6, 0, 0])
@@ -167,7 +163,7 @@ class Intro(m.ThreeDScene):
         d = zeg(self, "Dan blijkt dat een elektron dat bij de schakelaar vertrekt, er meer dan tien uur over doet om bij de lamp te komen.")
         volg = m.Sphere(radius=0.12, resolution=(12, 6)).set_fill(Q_KLEUR, 1).set_stroke(width=0).move_to([-1, 0.3, 0.3])
         volg.add_updater(lambda v, dt: v.shift(0.05 * dt * m.RIGHT + rng.normal(0, 0.06 * np.sqrt(dt), 3)))
-        ring = mat(m.Torus(major_radius=0.3, minor_radius=0.025, resolution=(24, 8)), ACCENT, 0.4)
+        ring = mat(m.Torus(major_radius=0.3, minor_radius=0.025, resolution=(24, 8)), 1, ACCENT, 0.4)
         ring.add_updater(lambda r: r.move_to(volg))
         kaart_s, kaart_l = schakelaar(open=False).scale(0.6), lamp().scale(0.6)
         kaart = m.VGroup(kaart_s, m.Line(3.5 * m.LEFT, 3.5 * m.RIGHT, color=DRAAD, stroke_width=STREEP), kaart_l)
@@ -221,7 +217,7 @@ class Intro(m.ThreeDScene):
         diepte.clear_updaters()
         self.remove(diepte, vraag, rand)
         self.set_camera_orientation(phi=0, theta=-90 * m.DEGREES, zoom=1, frame_center=m.ORIGIN)
-        tafel = mat(m.Prism(dimensions=[30, 30, 0.1]), ZWART, 0.6).move_to([0, 0, -0.08])
+        tafel = mat(m.Prism(dimensions=[30, 30, 0.1]), 1, ZWART, 0.6).move_to([0, 0, -0.08])
         tafellicht = m.PointLight([SCHAKELING[0] + 2.2, SCHAKELING[1], 0.6], GEEL, intensity=0, radius=4)
         self.add(tafel, tafellicht)
         lb, rb, ro, lo = (SCHAKELING + np.array(v) for v in ([-2.2, 1.5, 0], [2.2, 1.5, 0], [2.2, -1.5, 0], [-2.2, -1.5, 0]))
@@ -244,7 +240,7 @@ class Intro(m.ThreeDScene):
 
         d = zeg(self, "Aan het eind kun je elke schakeling op het vwo-examen ontleden,")
         self.play(m.Transform(kring[1][1], plaats(schakelaar(open=False), lb, rb)), run_time=SNEL)
-        i = stroom([lo, lb, rb, ro, lo])
+        i = pijltjes_langs([lo, lb, rb, ro, lo])
         kring[2][1][2].set_fill(LICHT, 0.9)
         tafellicht.intensity = 3
         self.add(i)

@@ -1,107 +1,21 @@
 """Stroom: richting (afspraak, andersom dan de elektronen), stroomsterkte met de waterleiding, en de stroommeter.
 
-Begint met het schema waarop waterkring_schema.py eindigt. Stroom = witte pijltjes die door de kring trekken;
+Begint met het schema waarop 01_waterkring.py eindigt. Stroom = witte pijltjes die door de kring trekken;
 de symbolen maskeren ze (een pijltje vervaagt waar het onder een symbool door gaat). Daarna 3D: een vlak dwars
 op de leiding telt het water dat erdoor gaat (I = water per seconde), dan de stroommeter in 3D en als symbool.
 Water en stroom gaan dezelfde kant op: van + door de lamp naar −; de elektronen andersom.
 
-Run vanuit de repo-root:  python -m manimgx render scenes/stroom.py -o videos/Stroom.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/02_stroom.py -o videos/Stroom.mp4
 """
 import numpy as np
 import manimgx as m
-from stijl import *
-import kring_3d_naar_2d as kr
-import waterkring as wk  # als modules: anders telt deze file meer dan één scène
-
-Z, LUS = kr.Z, wk.LUS
-METER_X = -0.5  # plek van het telvlak en later de stroommeter, op de voorste draad
-
-_s_raster = np.linspace(0, LUS.lengte, 16001)
-_p_raster = np.array([LUS.punt(s) for s in _s_raster])
-
-
-def s_op(x, y):
-    """Afstand langs de lus van het punt (x, y) op de kring."""
-    return _s_raster[np.argmin(np.linalg.norm(_p_raster[:, :2] - [x, y], axis=1))]
-
-
-def interval(p, q):
-    a, b = s_op(*p), s_op(*q)
-    return min(a, b), max(a, b)
-
-
-MASKER_BRON = interval((kr.LINKS, 0.13), (kr.LINKS, -0.13))   # tussen de platen van de bron
-MASKER_LAMP = interval((kr.RECHTS, -0.3), (kr.RECHTS, 0.3))   # binnen de cirkel van de lamp
-MASKER_METER = interval((METER_X - 0.32, -kr.HALF), (METER_X + 0.32, -kr.HALF))
-
-
-def maskeer(groep, maskers, zicht, rand=0.05):
-    """Zichtbaarheid per lid: zicht (ValueTracker) maal 0 onder een symbool, met een zachte rand van `rand`.
-    maskers is een lijst van (s_begin, s_eind); later toevoegen kan (de stroommeter)."""
-    n = len(groep)
-
-    def bijwerken(g):
-        for i, lid in enumerate(g):
-            s = (g.s + i * LUS.lengte / n) % LUS.lengte
-            f = 1.0
-            for a, b in maskers:
-                d = 0.0 if a <= s <= b else min(abs(s - a), abs(s - b))
-                f = min(f, np.clip(d / rand, 0, 1))
-            lid.set_fill(opacity=zicht.get_value() * f)
-    groep.add_updater(bijwerken)
-    bijwerken(groep)
-    return groep
-
-
-def stroompijlen(tempo, afstand=0.6):
-    """Witte driehoekjes die van + door de lamp naar − trekken (andersom dan de elektronen)."""
-    pijlen = m.VGroup(*(m.Triangle(fill_color=WIT, fill_opacity=0, stroke_width=0).scale(0.09).rotate(-m.PI / 2)
-                        for _ in range(int(LUS.lengte / afstand))))  # Triangle wijst omhoog; nu naar rechts
-    for p in pijlen:
-        p.hoek = 0.0
-
-    def zet(p, s):
-        a, b = LUS.punt(s), LUS.punt(s - 1e-3)  # richting -1: op weg naar kleinere s
-        h = m.angle_of_vector(b - a)
-        p.rotate(h - p.hoek)
-        p.hoek = h
-        p.move_to(a)
-    return wk.stromer(pijlen, tempo, zet, richting=-1)
-
-
-def schema(met_meter=False):
-    """Het schakelschema: bron, brandende lamp met gloed, draden en labels; eventueel met stroommeter in de voorste draad."""
-    bron_s, lamp_s = kr.schema_symbolen()
-    lamp_s[2].set_fill(LICHT, 1)
-    L, R, H = kr.LINKS, kr.RECHTS, kr.HALF
-    plus_s = draad(pool_b(lamp_s), [R, H, Z], [L, H, Z], pool_a(bron_s))  # zelfde looprichting als de 3D-draden
-    labels = [label("spanningsbron", bron_s, m.LEFT, size=LABEL, kleur=TEKST),
-              label("lamp", lamp_s, m.RIGHT, size=LABEL, kleur=TEKST)]
-    if met_meter:
-        meter_s = plaats(meter("A"), [METER_X - LENGTE / 2, -H, Z], [METER_X + LENGTE / 2, -H, Z])
-        min_s = m.VGroup(draad(pool_b(bron_s), [L, -H, Z], pool_a(meter_s)),
-                         draad(pool_b(meter_s), [R, -H, Z], pool_a(lamp_s)))
-        labels.append(label("stroommeter", meter_s, m.DOWN, size=LABEL, kleur=TEKST))
-        symbolen = m.VGroup(bron_s, lamp_s, meter_s)
-    else:
-        min_s = draad(pool_b(bron_s), [L, -H, Z], [R, -H, Z], pool_a(lamp_s))
-        symbolen = m.VGroup(bron_s, lamp_s)
-    for x in (min_s, plus_s):
-        x.set_stroke(WIT, 3)
-    return dict(symbolen=symbolen, gloed=kr.schemagloed(lamp_s), labels=m.VGroup(*labels), min_=min_s, plus=plus_s)
-
-
-def paneel(*inhoud, hoek=m.UL):
-    """Inhoud op een (bijna) dekkend vlak met rand, vast in beeld: leesbaar, ook boven de kring."""
-    groep = m.VGroup(*inhoud).arrange(m.DOWN, aligned_edge=m.LEFT, buff=0.25)
-    vlak = m.SurroundingRectangle(groep, buff=0.25, corner_radius=0.12).set_stroke(GEDEMPT, 2).set_fill(BG, 0.9)
-    return m.VGroup(vlak, groep).to_corner(hoek, buff=0.5)  # vlak eerst: tekst ligt erbovenop
+from bouwstenen import *
 
 
 def stroommeter3d():
     """Kastje in de voorste leiding, met een wijzerplaat en een A erop."""
-    c = np.array([METER_X, -kr.HALF, 0.1])
-    kast = wk.mat(m.Prism(dimensions=[0.5, 0.32, 0.2])).move_to(c)
+    c = np.array([METER_X, -HALF, 0.1])
+    kast = mat(m.Prism(dimensions=[0.5, 0.32, 0.2])).move_to(c)
     plaat = m.Circle(radius=0.11).set_stroke(WIT, 2).move_to(c + [0, 0, 0.101])
     letter = tekst("A", LABEL).scale(0.6).move_to(c + [0, 0, 0.102])
     return m.Group(kast, plaat, letter)
@@ -110,7 +24,7 @@ def stroommeter3d():
 def telvlak():
     """Denkbeeldig vlak dwars op de voorste leiding (normaal langs x); flitst als er een deeltje doorheen gaat."""
     v = m.Square(side_length=0.45).set_fill(WIT, 0.12).set_stroke(WIT, 2)
-    v.rotate(m.PI / 2, m.UP).move_to([METER_X, -kr.HALF, Z])
+    v.rotate(m.PI / 2, m.UP).move_to([METER_X, -HALF, Z])
     v.flits = 0.0
 
     def dim(mob, dt):
@@ -120,10 +34,9 @@ def telvlak():
     return v
 
 
-class Stroom(m.ThreeDScene):
+class Stroom(Les):
     def construct(self):
-        self.add(*kr.zon_en_schemer())
-        hud = self.add_fixed_in_frame_mobjects
+        self.add(*zon_en_schemer())
         tempo = m.ValueTracker(0)
         zicht_e, zicht_p, zicht_w = m.ValueTracker(0), m.ValueTracker(0), m.ValueTracker(0)
         maskers = [MASKER_BRON, MASKER_LAMP]
@@ -132,9 +45,9 @@ class Stroom(m.ThreeDScene):
         self.set_camera_orientation(phi=0, theta=-90 * m.DEGREES, zoom=1.4, frame_center=[-0.5, 0, Z],
                                     focal_distance=400)
         sch = schema()
-        e = maskeer(wk.elektronen_in_kring(tempo), maskers, zicht_e)
-        pijlen = maskeer(stroompijlen(tempo), maskers, zicht_p)
-        w = maskeer(wk.waterdeeltjes(tempo), [], zicht_w)
+        e = maskeer(elektronen_in_kring(tempo), maskers, zicht_e)
+        pijlen = maskeer(lus_pijltjes(tempo), maskers, zicht_p)
+        w = maskeer(waterdeeltjes(tempo), [], zicht_w)
         stap = LUS.lengte / len(w)  # afstand tussen twee waterdeeltjes
         tempo.set_value(2 * stap)   # precies 2 deeltjes per seconde door elk punt: de teller komt exact uit
         self.add(sch["gloed"], sch["min_"], sch["plus"], sch["symbolen"], sch["labels"], e, pijlen, w)
@@ -158,24 +71,24 @@ class Stroom(m.ThreeDScene):
         self.wait(d)
 
         # ── Naar 3D: de waterleiding ──
-        rad, pomp = wk.waterrad(tempo), wk.pomp(tempo)
-        min_3d, plus_3d = kr.lijn(*wk.PAD[:4]), kr.lijn(*wk.PAD[4:])
+        rad, de_pomp = waterrad(tempo), pomp(tempo)
+        min_3d, plus_3d = lijn(*PAD[:4]), lijn(*PAD[4:])
         draad_min, draad_plus = sch["min_"], sch["plus"]  # deze objecten blijven; hun vorm verandert
         d = zeg(self, "Maar hoeveel stroom loopt er eigenlijk? Daarvoor gaan we terug naar onze waterleiding.")
         self.move_camera(phi=60 * m.DEGREES, theta=-60 * m.DEGREES, zoom=1.2, frame_center=[-0.5, 0, 0.3],
                          focal_distance=20, added_anims=[
                              m.FadeOut(sch["symbolen"]), m.FadeOut(sch["gloed"]), m.FadeOut(sch["labels"]),
-                             m.FadeIn(rad), m.FadeIn(pomp), m.Transform(draad_min, min_3d),
+                             m.FadeIn(rad), m.FadeIn(de_pomp), m.Transform(draad_min, min_3d),
                              m.Transform(draad_plus, plus_3d), zicht_p.animate.set_value(0),
                              zicht_w.animate.set_value(1)], run_time=max(d, 3))
 
         # ── Stroomsterkte: water door een vlak, per seconde ──
         vlak = telvlak()
         d = zeg(self, "Zet op één plek een denkbeeldig vlak dwars op de leiding, zodat al het water erdoorheen moet.")
-        self.move_camera(phi=62 * m.DEGREES, theta=-72 * m.DEGREES, zoom=2.4, frame_center=[METER_X, -kr.HALF, 0.1],
+        self.move_camera(phi=62 * m.DEGREES, theta=-72 * m.DEGREES, zoom=2.4, frame_center=[METER_X, -HALF, 0.1],
                          added_anims=[m.FadeIn(vlak)], run_time=d)
 
-        p_vlak = s_op(METER_X, -kr.HALF)
+        p_vlak = s_op(METER_X, -HALF)
         teller = m.VGroup()
         teller.actief, teller.t, teller.s0, teller.N, teller.regels, teller.I = False, 0.0, 0.0, 0, None, None
 
@@ -212,7 +125,7 @@ class Stroom(m.ThreeDScene):
         d = zeg(self, "De stroomsterkte I is de hoeveelheid water die per seconde door dat vlak stroomt. Laten we tellen.")
         herstart()
         tel(teller, 0)
-        hud(teller)
+        self.hud(teller)
         self.wait(d + 3)
         d = zeg(self, "Er gaan ongeveer twee deeltjes per seconde door het vlak.")
         self.wait(d)
@@ -230,11 +143,11 @@ class Stroom(m.ThreeDScene):
         achter, (i_formule, eenheid) = formules[0], formules[1]
         d = zeg(self, "In een echte draad tellen we geen water, maar lading. "
                       "De stroomsterkte is de lading Q die per seconde langs een punt gaat.")
-        hud(achter, i_formule)
+        self.hud(achter, i_formule)
         self.play(m.FadeOut(teller), m.FadeIn(achter), m.FadeIn(i_formule), tempo.animate.set_value(2 * stap),
                   run_time=d)
         d = zeg(self, "We meten I in ampère, A. Eén ampère is één coulomb lading per seconde.")
-        hud(eenheid)
+        self.hud(eenheid)
         self.play(m.FadeIn(eenheid), run_time=d)
 
         # ── De stroommeter: in 3D, in serie ──
@@ -252,9 +165,9 @@ class Stroom(m.ThreeDScene):
                          added_anims=[m.FadeOut(achter), m.FadeOut(i_formule), m.FadeOut(eenheid)], run_time=3)
         nieuw = schema(met_meter=True)
         maskers.append(MASKER_METER)  # de pijltjes gaan nu ook onder de stroommeter door
-        for x in (rad, pomp[2]):
+        for x in (rad, de_pomp[2]):
             x.clear_updaters()
-        self.play(m.FadeOut(rad), m.FadeOut(pomp), m.FadeOut(meter3d),
+        self.play(m.FadeOut(rad), m.FadeOut(de_pomp), m.FadeOut(meter3d),
                   m.FadeIn(nieuw["symbolen"]), m.FadeIn(nieuw["gloed"]), m.FadeIn(nieuw["labels"]),
                   m.FadeOut(draad_min), m.FadeOut(draad_plus), m.FadeIn(nieuw["min_"]), m.FadeIn(nieuw["plus"]),
                   zicht_w.animate.set_value(0), zicht_p.animate.set_value(1), run_time=max(d - 3, 2))

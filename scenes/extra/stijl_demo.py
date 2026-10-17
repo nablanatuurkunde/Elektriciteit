@@ -1,7 +1,7 @@
-"""Voorbeelden van de huisstijl. Run vanuit de repo-root:  python -m manimgx render scenes/stijl_demo.py WetVanOhm -o videos/WetVanOhm.mp4"""
+"""Voorbeelden van de huisstijl. Run vanuit de repo-root:  python -m manimgx render scenes/extra/stijl_demo.py WetVanOhm -o videos/WetVanOhm.mp4"""
 import numpy as np
 import manimgx as m
-from stijl import *
+from bouwstenen import *
 
 
 class Symbolen(m.Scene):
@@ -33,7 +33,7 @@ class WetVanOhm(m.Scene):
 
         # Stroom: pijltjes van + naar −; lamp gaat branden
         pad = [lo, lb, rb, ro, lo]
-        i = stroom(pad)
+        i = pijltjes_langs(pad)
         self.play(m.FadeIn(i), kring[2][1][2].animate.set_fill(LICHT, 0.6))
         self.wait(2)
 
@@ -50,5 +50,5 @@ class WetVanOhm(m.Scene):
             self.wait(PAUZE)
 
         # Elektronen bewegen de andere kant op
-        self.play(m.FadeOut(i), m.FadeIn(e := elektronen(pad)))
+        self.play(m.FadeOut(i), m.FadeIn(e := elektronen_langs(pad)))
         self.wait(3)

@@ -1,30 +1,26 @@
-"""Weerstand en de wet van Ohm, in de hoogte-kring uit spanning.py.
+"""Weerstand en de wet van Ohm, in de hoogte-kring uit 03_spanning.py.
 
-Begint waar spanning.py eindigt. Waarom zakt de stroom over de lamp? Weerstand. Alles heeft een beetje weerstand,
+Begint waar 03_spanning.py eindigt. Waarom zakt de stroom over de lamp? Weerstand. Alles heeft een beetje weerstand,
 maar bij draden is die te verwaarlozen. Wat weerstand is (R, ohm), wat een weerstand (onderdeel) doet, met de
 zigzag als symbool. Dan de wet van Ohm, visueel: spanning ×2 → hogere batterij én pijltjes 2× zo snel;
 weerstand ×2 → pijltjes half zo snel. U = I · R geldt altijd; bij een lamp verandert R zelf wel.
 
-Run vanuit de repo-root:  python -m manimgx render scenes/weerstand.py -o videos/Weerstand.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/04_weerstand.py -o videos/Weerstand.mp4
 """
 import numpy as np
 import manimgx as m
-from stijl import *
-import kring_3d_naar_2d as kr
-import waterkring as wk
-import stroom as st
-import spanning as sp  # als modules: anders telt deze file meer dan één scène
+from bouwstenen import *
 
-Z, LUS = kr.Z, wk.LUS
-MASKER_WEERSTAND = st.interval((kr.RECHTS, -0.37), (kr.RECHTS, 0.37))
+
+MASKER_WEERSTAND = interval((RECHTS, -0.37), (RECHTS, 0.37))
 
 
 def in_3d(p, h, stijf):
-    """Als spanning.in_3d, maar met instelbare hoogte h (spanning van de batterij), en
+    """Als kring.hoogte_vorm, maar met instelbare hoogte h (spanning van de batterij), en
     stijf: 1 = het onderdeel rechts kantelt als stijf geheel (lamp blijft rond), 0 = het rekt mee over de helling
            (een zigzag mag rekken; zo kan de helling ook hoger dan het symbool lang is)."""
     x, y, z = p
-    L, R, half = kr.LINKS, kr.RECHTS, LENGTE / 2
+    L, R, half = LINKS, RECHTS, LENGTE / 2
     lz, rz = L + 0.6, R - 0.6
     if x < lz:  # batterij: stijgt tussen de platen
         return np.array([x, y, z + h * np.clip((y + 0.1) / 0.2, 0, 1)])
@@ -39,7 +35,7 @@ def in_3d(p, h, stijf):
         if abs(y) <= half:
             y_r, z_r = y * cos, (boven + onder) / 2 + y * sin
         else:
-            krimp = half * (1 - cos) * np.clip(1 - (abs(y) - half) / sp.OVERGANG, 0, 1)
+            krimp = half * (1 - cos) * np.clip(1 - (abs(y) - half) / OVERGANG, 0, 1)
             y_r, z_r = y - np.sign(y) * krimp, (boven if y > 0 else onder)
         return np.array([x, stijf * y_r + (1 - stijf) * y_s, z + stijf * z_r + (1 - stijf) * z_s])
     return np.array([x, y, z + (h if y > 0 else 0)])  # draden: vlak, achter boven en voor onder
@@ -49,13 +45,12 @@ def ohm_regels(U, I, R):
     return [waarde("U", U, "V"), waarde("I", I, "A"), waarde("R", R, r"\Omega", decimalen=0)]
 
 
-class Weerstand(m.ThreeDScene):
+class Weerstand(Les):
     def construct(self):
-        self.add(*kr.zon_en_schemer())
-        hud = self.add_fixed_in_frame_mobjects
-        h, stijf = m.ValueTracker(sp.H), m.ValueTracker(1)
+        self.add(*zon_en_schemer())
+        h, stijf = m.ValueTracker(H), m.ValueTracker(1)
         stap = LUS.lengte / int(LUS.lengte / 0.3)
-        tempo = m.ValueTracker(2 * stap)  # zelfde tempo als in stroom.py en spanning.py
+        tempo = m.ValueTracker(2 * stap)  # zelfde tempo als in 02_stroom.py en 03_spanning.py
         naar_3d = lambda p: in_3d(p, h.get_value(), stijf.get_value())
 
         def til_op(mob, zicht=None):
@@ -86,29 +81,29 @@ class Weerstand(m.ThreeDScene):
             self.play(m.Indicate(kopie, color=kleur, scale_factor=1.1), run_time=duur)
             self.remove(kopie)
 
-        # ── Begin: zoals spanning.py eindigt ──
+        # ── Begin: zoals 03_spanning.py eindigt ──
         self.set_camera_orientation(phi=65 * m.DEGREES, theta=-62 * m.DEGREES, zoom=1.25, frame_center=[0.6, 0, 0.8],
                                     focal_distance=20)
-        sch = st.schema()
+        sch = schema()
         bron_s, lamp_s = sch["symbolen"]
         zicht_lamp, zicht_zz, zicht_zz2 = m.ValueTracker(1), m.ValueTracker(0), m.ValueTracker(0)
         for mob in (bron_s, sch["min_"], sch["plus"]):
             til_op(mob)
         til_op(lamp_s, zicht_lamp)
-        maskers = [st.MASKER_BRON, st.MASKER_LAMP]
-        pijlen = st.maskeer(sp.stroompijlen3d(tempo, naar_3d), maskers, m.ValueTracker(1))
-        yv = -kr.HALF - 0.55
+        maskers = [MASKER_BRON, MASKER_LAMP]
+        pijlen = maskeer(lus_pijltjes_3d(tempo, naar_3d), maskers, m.ValueTracker(1))
+        yv = -HALF - 0.55
         vm_plat = plaats(meter("V"), [0.3, yv, Z], [1.1, yv, Z]).scale(0.7)
-        a, b = [pool_a(vm_plat)[0], -kr.HALF, Z], [pool_b(vm_plat)[0], -kr.HALF, Z]
+        a, b = [pool_a(vm_plat)[0], -HALF, Z], [pool_b(vm_plat)[0], -HALF, Z]
         meting = m.VGroup(vm_plat, draad(pool_a(vm_plat), a).set_stroke(WIT, 3),
                           draad(pool_b(vm_plat), b).set_stroke(WIT, 3), knoop(a), knoop(b))
-        aflezing = st.paneel(waarde("U", 0, "V", decimalen=0), hoek=m.UR)
-        hud(aflezing)
+        aflezing = paneel(waarde("U", 0, "V", decimalen=0), hoek=m.UR)
+        self.hud(aflezing)
         self.add(bron_s, lamp_s, sch["min_"], sch["plus"], pijlen, meting)
 
         # ── Waarom zakt de stroom over de lamp? ──
         d = zeg(self, "Maar waarom verandert de lamp de spanning in de stroomkring?")
-        self.move_camera(theta=-75 * m.DEGREES, frame_center=[kr.RECHTS - 0.2, 0, 0.6], zoom=1.6,
+        self.move_camera(theta=-75 * m.DEGREES, frame_center=[RECHTS - 0.2, 0, 0.6], zoom=1.6,
                          added_anims=[m.FadeOut(meting), m.FadeOut(aflezing)], run_time=d)
         d = zeg(self, "De lamp heeft weerstand. In het dunne gloeidraadje botsen de elektronen steeds tegen de atomen. "
                       "Daarbij geven ze energie af: het draadje wordt heet en geeft licht.")
@@ -123,23 +118,23 @@ class Weerstand(m.ThreeDScene):
         self.move_camera(theta=-55 * m.DEGREES, frame_center=[-0.4, 0, 0.6], zoom=1.1, run_time=d)
 
         # ── Wat is weerstand? R in ohm ──
-        eenheid = st.paneel(tekst("weerstand R, in ohm (Ω)", LABEL), formule(r"1\ \Omega = 1\ \mathrm{V/A}"), hoek=m.UR)
+        eenheid = paneel(tekst("weerstand R, in ohm (Ω)", LABEL), formule(r"1\ \Omega = 1\ \mathrm{V/A}"), hoek=m.UR)
         d = zeg(self, "Weerstand zegt hoe moeilijk de stroom ergens doorheen komt. Hoe groter de weerstand, "
                       "hoe meer spanning er nodig is om er een bepaalde stroom door te sturen.")
         self.wait(d)
         d = zeg(self, "We geven weerstand aan met R, en meten hem in ohm, met het teken omega. "
                       "Eén ohm betekent: je hebt één volt nodig voor één ampère.")
-        hud(eenheid)
+        self.hud(eenheid)
         self.play(m.FadeIn(eenheid), run_time=d)
 
         # ── Het onderdeel 'weerstand', met zigzag ──
-        zigzag = til_op(plaats(weerstand_zigzag(), [kr.RECHTS, -LENGTE / 2, Z], [kr.RECHTS, LENGTE / 2, Z]), zicht_zz)
+        zigzag = til_op(plaats(weerstand_zigzag(), [RECHTS, -LENGTE / 2, Z], [RECHTS, LENGTE / 2, Z]), zicht_zz)
         d = zeg(self, "Soms wil je met opzet weerstand in een kring, bijvoorbeeld om de stroom klein te houden "
                       "zodat een LED niet kapotgaat. Dan gebruik je een weerstand: een onderdeel met een vaste weerstand.")
-        maskers.remove(st.MASKER_LAMP)
+        maskers.remove(MASKER_LAMP)
         maskers.append(MASKER_WEERSTAND)
         self.add(zigzag)
-        self.move_camera(theta=-70 * m.DEGREES, frame_center=[kr.RECHTS - 0.2, 0, 0.6], zoom=1.6, added_anims=[
+        self.move_camera(theta=-70 * m.DEGREES, frame_center=[RECHTS - 0.2, 0, 0.6], zoom=1.6, added_anims=[
             m.FadeOut(eenheid), zicht_lamp.animate.set_value(0), zicht_zz.animate.set_value(1),
             stijf.animate.set_value(0)],
             run_time=d)
@@ -148,7 +143,7 @@ class Weerstand(m.ThreeDScene):
         licht_op(zigzag, R_KLEUR, d)
 
         # ── De wet van Ohm, visueel ──
-        ohm = st.paneel(*ohm_regels(1.5, 0.5, 3), hoek=m.UR)
+        ohm = paneel(*ohm_regels(1.5, 0.5, 3), hoek=m.UR)
         rijen = ohm[1]
 
         def naar(U, I, R):
@@ -156,16 +151,16 @@ class Weerstand(m.ThreeDScene):
                     for oud, nieuw in zip(rijen, ohm_regels(U, I, R))]
 
         d = zeg(self, "Met 1,5 volt over 3 ohm loopt er een stroom van 0,5 ampère.")
-        hud(ohm)
+        self.hud(ohm)
         self.move_camera(theta=-55 * m.DEGREES, frame_center=[-0.4, 0, 1.0], zoom=1.0,
                          added_anims=[m.FadeIn(ohm)], run_time=d)
         d = zeg(self, "Wat gebeurt er als we de spanning twee keer zo groot maken? De batterij tilt de stroom twee keer "
                       "zo hoog, en de stroom gaat twee keer zo hard: 1 ampère.")
-        self.play(h.animate.set_value(2 * sp.H), tempo.animate.set_value(4 * stap), *naar(3.0, 1.0, 3),
+        self.play(h.animate.set_value(2 * H), tempo.animate.set_value(4 * stap), *naar(3.0, 1.0, 3),
                   run_time=min(d, 3))
         self.wait(max(d - 3, 0))
 
-        zigzag2 = til_op(plaats(weerstand_zigzag(tanden=12), [kr.RECHTS, -LENGTE / 2, Z], [kr.RECHTS, LENGTE / 2, Z]),
+        zigzag2 = til_op(plaats(weerstand_zigzag(tanden=12), [RECHTS, -LENGTE / 2, Z], [RECHTS, LENGTE / 2, Z]),
                          zicht_zz2)
         self.add(zigzag2)
         d = zeg(self, "En als we de weerstand twee keer zo groot maken, 6 ohm? Dan komt de stroom moeilijker door "
@@ -175,10 +170,10 @@ class Weerstand(m.ThreeDScene):
         self.remove(zigzag)
         self.wait(max(d - 3, 0))
 
-        wet = st.paneel(formule(r"U = I \cdot R", size=FORMULE + 8), formule(r"3{,}0 = 0{,}5 \cdot 6"), hoek=m.UL)
+        wet = paneel(formule(r"U = I \cdot R", size=FORMULE + 8), formule(r"3{,}0 = 0{,}5 \cdot 6"), hoek=m.UL)
         d = zeg(self, "Dit is de wet van Ohm: de spanning over een onderdeel is de stroom erdoor, maal de weerstand. "
                       "U is I maal R.")
-        hud(wet)
+        self.hud(wet)
         self.play(m.FadeIn(wet), run_time=d)
         d = zeg(self, "Deze formule geldt altijd en voor elk onderdeel: de weerstand is gewoon de spanning gedeeld "
                       "door de stroom.")

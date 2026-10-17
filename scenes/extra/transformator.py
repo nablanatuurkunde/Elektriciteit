@@ -1,23 +1,18 @@
 """De transformator: eerst een 3D-model in een kring (stopcontact → transformator → lampje), dan het schema.
 
-Opzet zoals kring_3d_naar_2d.py: het 3D-model ligt zo op tafel dat het van boven al het schema is (stopcontact
+Opzet zoals extra/kring_3d_naar_2d.py: het 3D-model ligt zo op tafel dat het van boven al het schema is (stopcontact
 links, transformator in het midden met zijn spoelen langs y, lampje rechts). De camera gaat naar het bovenaanzicht
 en de 3D-onderdelen vloeien ter plekke over in hun symbolen. Daarna U_p / U_s = N_p / N_s met een voorbeeld
 (1150 en 60 windingen: 230 V → 12 V) en vermogen: P_p = P_s (ideale transformator), dus hogere spanning = lagere
 stroom. Het magnetisme blijft bij één zin: de wisselstroom maakt in de kern een wisselend veld (de kern 'pulseert').
 
-Run vanuit de repo-root:  python -m manimgx render scenes/transformator.py -o videos/Transformator.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/extra/transformator.py -o videos/Transformator.mp4
 """
 import numpy as np
 import manimgx as m
-from stijl import *
-import kring_3d_naar_2d as kr
-import stroom as st
-import batterij_lamp as bl
-import waterkring as wk
-import serie_parallel as sp  # als modules: anders telt deze file meer dan één scène
+from bouwstenen import *
 
-Z = kr.Z
+
 BEEN_X, BEEN_Y, DIK = 0.65, 0.85, 0.3   # kern: benen op x = ±0,65, jukken op y = ±0,85, balken 0,3 dik
 KERN_Z = DIK / 2                         # kern ligt op tafel
 SPOEL_R, SPOEL_Y = 0.25, 0.6             # spoelen: straal 0,25, van y = −0,6 tot 0,6
@@ -29,7 +24,7 @@ def kern():
     """IJzeren kern: rechthoekig raam van vier balken, plat op tafel."""
     balken = [m.Prism(dimensions=[DIK, 2 * BEEN_Y + DIK, DIK]).move_to([x, 0, KERN_Z]) for x in (-BEEN_X, BEEN_X)]
     balken += [m.Prism(dimensions=[2 * BEEN_X - DIK, DIK, DIK]).move_to([0, y, KERN_Z]) for y in (-BEEN_Y, BEEN_Y)]
-    return m.Group(*(wk.mat(b, 0.45).set_fill(GEDEMPT, 0.45) for b in balken))
+    return m.Group(*(mat(b, 0.45).set_fill(GEDEMPT, 0.45) for b in balken))
 
 
 def spoel(x, windingen, start):
@@ -44,17 +39,17 @@ def spoel(x, windingen, start):
 
 def stopcontact():
     """Stopcontact links: blokje met twee gaatjes en het label 230 V plat op tafel."""
-    blok = wk.mat(m.Prism(dimensions=[0.6, 1.5, 0.3])).move_to([kr.LINKS, 0, 0.15])
+    blok = mat(m.Prism(dimensions=[0.6, 1.5, 0.3])).move_to([LINKS, 0, 0.15])
     gaten = m.Group(*(m.Cylinder(radius=0.06, height=0.02, direction=m.OUT).set_fill(BG, 1).set_stroke(width=0)
-                      .move_to([kr.LINKS, y, 0.31]) for y in (-0.25, 0.25)))
-    label = tekst("230 V", LABEL).move_to([kr.LINKS - 0.75, 0, Z + 0.01])
+                      .move_to([LINKS, y, 0.31]) for y in (-0.25, 0.25)))
+    label = tekst("230 V", LABEL).move_to([LINKS - 0.75, 0, Z + 0.01])
     return m.Group(blok, gaten, label)
 
 
 def lampje_3d():
-    """Fitting met peer (uit batterij_lamp.py, op schaal 1 eenheid = 10 cm), rechtop rechts op tafel."""
-    fitting = bl.Onderdeel([(0, 27), (1.8, 27), (1.8, 31), (0, 31)], (30, 0, -27))
-    peer = bl.Onderdeel(bl.peerprofiel(), (30, 0, -27), randen=[0])
+    """Fitting met peer (uit bouwstenen/modellen.py, op schaal 1 eenheid = 10 cm), rechtop rechts op tafel."""
+    fitting = Draaivorm([(0, 27), (1.8, 27), (1.8, 31), (0, 31)], (30, 0, -27))
+    peer = Draaivorm(peerprofiel(), (30, 0, -27), randen=[0])
     peer.vlak.set_material(None)  # geeft straks zelf licht
     return [fitting, peer]
 
@@ -74,36 +69,21 @@ def transformator_symbool(bulten_p=6, bulten_s=3):
 
 
 def f(tex, size=FORMULE - 6):
-    return formule(sp.komma(tex), size=size)
+    return formule(komma(tex), size=size)
 
 
-class Transformator(m.ThreeDScene):
+class Transformator(Les):
     def construct(self):
-        self.add(*kr.zon_en_schemer())
-        hud = self.add_fixed_in_frame_mobjects
-
-        def toon(*mobs):
-            hud(*mobs)
-            return [m.FadeIn(x) for x in mobs]
-
-        def doe(d, *anims, duur=NORMAAL):
-            """Animatie van `duur` seconden, daarna stilstaan tot de zin (d seconden) klaar is."""
-            self.play(*anims, run_time=min(duur, d))
-            self.wait(max(d - duur, 0))
-
-        def paneel(*regels, hoek=m.UR):
-            pnl = st.paneel(*regels, hoek=hoek)
-            return pnl, pnl[0], pnl[1]
-
+        self.add(*zon_en_schemer())
         # ── 3D: stopcontact – transformator – lampje ──
         de_kern = kern()
         prim, sec = spoel(-BEEN_X, 20, m.PI), spoel(BEEN_X, 5, 0.0)  # veel windingen links, weinig rechts
         contact = stopcontact()
         lamp3d = lampje_3d()
-        draden3d = m.VGroup(*(draad([kr.LINKS + 0.3, y, Z], [-POOL_X - 0.3, y, Z], [-POOL_X, y, KERN_Z])
+        draden3d = m.VGroup(*(draad([LINKS + 0.3, y, Z], [-POOL_X - 0.3, y, Z], [-POOL_X, y, KERN_Z])
                               for y in (SPOEL_Y, -SPOEL_Y)),  # sluit aan op de spoeluiteinden (op kernhoogte)
-                            *(draad([POOL_X, y, KERN_Z], [POOL_X + 0.3, y, Z], [kr.RECHTS, y, Z],
-                                    [kr.RECHTS, 0.18 * np.sign(y), Z])
+                            *(draad([POOL_X, y, KERN_Z], [POOL_X + 0.3, y, Z], [RECHTS, y, Z],
+                                    [RECHTS, 0.18 * np.sign(y), Z])
                               for y in (SPOEL_Y, -SPOEL_Y))).set_stroke(WIT, 3)
         self.set_camera_orientation(phi=62 * m.DEGREES, theta=-58 * m.DEGREES, zoom=1.15, frame_center=[0, 0, 0.3])
         omtrek = m.always_redraw(lambda: m.VGroup(*(d.omtrek(self.camera.get_theta()) for d in lamp3d)))
@@ -147,8 +127,8 @@ class Transformator(m.ThreeDScene):
                       "voor de ijzeren kern.")
         self.move_camera(phi=0, theta=-90 * m.DEGREES, zoom=1.0, frame_center=[1.8, 0, Z], focal_distance=400,
                          run_time=3)
-        bron_s = plaats(wisselbron(), [kr.LINKS, 0.6, Z], [kr.LINKS, -0.6, Z])
-        lamp_s = plaats(lamp(), [kr.RECHTS, 0.6, Z], [kr.RECHTS, -0.6, Z])
+        bron_s = plaats(wisselbron(), [LINKS, 0.6, Z], [LINKS, -0.6, Z])
+        lamp_s = plaats(lamp(), [RECHTS, 0.6, Z], [RECHTS, -0.6, Z])
         lamp_s[2].set_fill(LICHT, 1)
         trafo_s = transformator_symbool()
         draden2d = m.VGroup(*(draad(pool, [-POOL_X, y, Z]) for pool, y in ((pool_a(bron_s), SPOEL_Y),
@@ -161,43 +141,43 @@ class Transformator(m.ThreeDScene):
         omtrek.clear_updaters()
         de_kern.clear_updaters()
         self.play(*(m.FadeOut(x) for x in (*drie_d, omtrek)), m.FadeIn(bron_s), m.FadeIn(lamp_s), m.FadeIn(trafo_s),
-                  m.FadeIn(draden2d), m.FadeIn(labels), m.FadeIn(kr.schemagloed(lamp_s)), run_time=2)
+                  m.FadeIn(draden2d), m.FadeIn(labels), m.FadeIn(schemagloed(lamp_s)), run_time=2)
         self.wait(max(d - 5, 0))
 
         # ── U_p / U_s = N_p / N_s ──
-        verh, achter_v, (v_form, v_getal, v_reken) = paneel(
+        verh, achter_v, (v_form, v_getal, v_reken) = paneel_delen(
             f(r"\frac{U_p}{U_s} = \frac{N_p}{N_s}", size=FORMULE + 4),
             f(rf"N_p = {N_P},\quad N_s = {N_S}"),
             f(rf"U_s = U_p \cdot \frac{{N_s}}{{N_p}} = 230 \cdot \frac{{{N_S}}}{{{N_P}}} = 12\ \mathrm{{V}}"))
         d = zeg(self, "Hoeveel lager wordt de spanning? Dat hangt af van de windingen: de spanning verandert in "
                       "dezelfde verhouding als het aantal windingen.")
-        hud(achter_v)
-        doe(d, m.FadeIn(achter_v), *toon(v_form))
+        self.hud(achter_v)
+        self.doe(d, m.FadeIn(achter_v), *self.toon(v_form))
         d = zeg(self, f"Stel: de primaire spoel heeft {N_P} windingen en de secundaire {N_S}. "
                       "Dan wordt 230 volt maal 60 gedeeld door 1150: precies 12 volt voor het lampje.")
-        self.play(*toon(v_getal), run_time=SNEL)
-        doe(d - SNEL, *toon(v_reken))
+        self.play(*self.toon(v_getal), run_time=SNEL)
+        self.doe(d - SNEL, *self.toon(v_reken))
 
         # ── Vermogen: erin = eruit ──
-        verm, achter_p, (p_form, p_lamp, p_prim) = paneel(
+        verm, achter_p, (p_form, p_lamp, p_prim) = paneel_delen(
             f(r"P_p = P_s \quad\Rightarrow\quad U_p \cdot I_p = U_s \cdot I_s", size=FORMULE - 2),
             f(r"P_s = 12 \cdot 2 = 24\ \mathrm{W}"),
             f(r"I_p = \frac{24}{230} \approx 0,10\ \mathrm{A}"))
         d = zeg(self, "En de stroom? Een ideale transformator verliest geen energie: het vermogen dat erin gaat, "
                       "komt er ook weer uit.")
         self.play(m.FadeOut(verh), run_time=SNEL)
-        hud(achter_p)
-        doe(d - SNEL, m.FadeIn(achter_p), *toon(p_form))
+        self.hud(achter_p)
+        self.doe(d - SNEL, m.FadeIn(achter_p), *self.toon(p_form))
         d = zeg(self, "Het lampje gebruikt 12 volt en 2 ampère: 24 watt. Aan de primaire kant is dat ook 24 watt, "
                       "maar bij 230 volt: dan loopt daar maar 0,1 ampère.")
-        self.play(*toon(p_lamp), run_time=SNEL)
-        doe(d - SNEL, *toon(p_prim))
+        self.play(*self.toon(p_lamp), run_time=SNEL)
+        self.doe(d - SNEL, *self.toon(p_prim))
         d = zeg(self, "Lagere spanning betekent dus een hogere stroom, en andersom. "
                       "Een transformator ruilt spanning tegen stroom.")
         self.wait(d)
 
         # ── Toepassingen + samenvatting ──
-        samen, achter_s, regels = paneel(
+        samen, achter_s, regels = paneel_delen(
             tekst("werkt alleen met wisselspanning", LABEL), f(r"\frac{U_p}{U_s} = \frac{N_p}{N_s}"),
             f(r"U_p \cdot I_p = U_s \cdot I_s"), tekst("meer spanning = minder stroom", LABEL))
         d = zeg(self, "Zo maakt de oplader van je telefoon van 230 volt een paar volt. En het elektriciteitsnet doet "
@@ -205,8 +185,8 @@ class Transformator(m.ThreeDScene):
         self.play(m.FadeOut(verm), run_time=SNEL)
         self.wait(max(d - SNEL, 0))
         d = zeg(self, "Samengevat:")
-        hud(achter_s)
-        self.play(m.FadeIn(achter_s), m.LaggedStart(*(toon(r)[0] for r in regels), lag_ratio=0.3),
+        self.hud(achter_s)
+        self.play(m.FadeIn(achter_s), m.LaggedStart(*(self.toon(r)[0] for r in regels), lag_ratio=0.3),
                   run_time=max(d, 3))
         zeg(self, "")
         self.wait(3)

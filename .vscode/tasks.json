@@ -3,7 +3,7 @@
   "tasks": [
     {
       // Live preview of the open scene file; re-renders on save. ManimGX needs Python 3.13+.
-      // Runs from the repo root, so scenes in scenes/ can `from stijl import *`.
+      // Runs from the repo root, so scenes in scenes/ can `from bouwstenen import *`.
       "label": "ManimGX: preview",
       "type": "process",
       "command": "C:\\Python314\\python.exe",
@@ -19,6 +19,15 @@
       "type": "process",
       "command": "C:\\Python314\\python.exe",
       "args": ["-m", "manimgx", "render", "${file}", "${input:scene}", "-o", "videos/${input:scene}.mp4"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      // The whole film: renders changed parts, joins them into videos/Elektriciteit.mp4 (+ .srt).
+      "label": "Film maken",
+      "type": "process",
+      "command": "C:\\Python314\\python.exe",
+      "args": ["film.py"],
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
     }
