@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      // Live preview of the open scene file; re-renders on save. ManimGX needs Python 3.13+.
+      // Runs from the repo root, so scenes in scenes/ can `from stijl import *`.
+      "label": "ManimGX: preview",
+      "type": "process",
+      "command": "C:\\Python314\\python.exe",
+      "args": ["-m", "manimgx", "preview", "${file}"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      // Final render of the open scene file into videos/ (asks for the scene class).
+      "label": "ManimGX: render",
+      "type": "process",
+      "command": "C:\\Python314\\python.exe",
+      "args": ["-m", "manimgx", "render", "${file}", "${input:scene}", "-o", "videos/${input:scene}.mp4"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    { "id": "scene", "type": "promptString", "description": "Scene class to render" }
+  ]
+}

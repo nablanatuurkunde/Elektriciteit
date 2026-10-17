@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Renders (regenerate with the "ManimGX: render" task)
+videos/
+*.mp4
+*.storyboard*.png
+*.srt
