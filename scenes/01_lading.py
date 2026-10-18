@@ -64,25 +64,6 @@ def legenda():
                     for k, t in regels), hoek=m.UL)
 
 
-def rooster():
-    """Metaalrooster: positieve koperionen (oranje) op vaste plekken."""
-    return m.Group(*(mat(m.Sphere([x, y, z], radius=0.17, resolution=(12, 6)), 1, ORANJE, 0.4, 0.8)
-                     for x in np.arange(-3, 3.1, 1.0) for y in (-1, 0, 1) for z in (-1, 0, 1)))
-
-
-def vrije_elektronen(n, rng):
-    """Gele bolletjes die kriskras tussen de ionen door schieten, zonder netto richting."""
-    e = m.Group(*(m.Sphere([rng.uniform(-3.3, 3.3), rng.uniform(-1.3, 1.3), rng.uniform(-1.3, 1.3)], radius=0.06,
-                           resolution=(8, 4)).set_fill(ELEKTRON_KLEUR, 1).set_stroke(width=0) for _ in range(n)))
-
-    def beweeg(g, dt):
-        for d in g:
-            p = d.get_center() + rng.normal(0, 0.45 * np.sqrt(dt), 3)
-            d.move_to(np.clip(p, [-3.4, -1.4, -1.4], [3.4, 1.4, 1.4]))
-    e.add_updater(beweeg)
-    return e
-
-
 class Lading(Les):
     def construct(self):
         self.add(*zon_en_schemer())

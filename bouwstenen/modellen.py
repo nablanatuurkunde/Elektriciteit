@@ -78,22 +78,28 @@ class LiggendeBatterij:
                           for i in range(len(r) - 1) if z[i] != z[i + 1])).set_stroke(WIT, RAND_DIKTE)
 
 
-def opstelling():
-    """Tafellamp rechts en liggende batterij links (de tafelkring); geeft (lampdelen, beugel, batterij)."""
+def tafellamp_op(x):
+    """De tafellamp, met zijn voet op (x, 0) op de vloer; geeft (lampdelen, beugel)."""
     lamp3d = tafellamp()
     for d in lamp3d:
-        d.plaats = d.plaats + [RECHTS, 0, 0]  # omtrek() rekent vanuit plaats
-        d.vlak.shift(RECHTS * m.RIGHT)
-        d.ringen.shift(RECHTS * m.RIGHT)
-    beugel = m.VGroup(*(m.Line([RECHTS, 0, 3.3], [RECHTS + 0.9 * np.cos(a), 0.9 * np.sin(a), 4.5])
+        d.plaats = d.plaats + [x, 0, 0]  # omtrek() rekent vanuit plaats
+        d.vlak.shift(x * m.RIGHT)
+        d.ringen.shift(x * m.RIGHT)
+    beugel = m.VGroup(*(m.Line([x, 0, 3.3], [x + 0.9 * np.cos(a), 0.9 * np.sin(a), 4.5])
                         for a in np.arange(0, m.TAU, m.TAU / 3))).set_stroke(WIT, RAND_DIKTE)
     lamp3d[3].vlak.set_material(None)  # peer altijd onbelicht (eigen kleur), ook vóór hij gloeit: geen sprong
-    return lamp3d, beugel, LiggendeBatterij([LINKS, -BAT_HALF, Z])
+    return lamp3d, beugel
 
 
-def gloeiende_peer(lamp3d, g):
-    """Licht en halo rond de peer, aangestuurd door ValueTracker g (0 = uit, 1 = aan). Geeft (licht, halo)."""
-    peer, midden = lamp3d[3].vlak, np.array([RECHTS, 0, 3.65])
+def opstelling():
+    """Tafellamp rechts en liggende batterij links (de tafelkring); geeft (lampdelen, beugel, batterij)."""
+    return (*tafellamp_op(RECHTS), LiggendeBatterij([LINKS, -BAT_HALF, Z]))
+
+
+def gloeiende_peer(lamp3d, g, x=RECHTS):
+    """Licht en halo rond de peer van een tafellamp op x, aangestuurd door ValueTracker g (0 = uit, 1 = aan).
+    Geeft (licht, halo)."""
+    peer, midden = lamp3d[3].vlak, np.array([x, 0, 3.65])
     licht = m.PointLight(midden, LICHT, intensity=0, radius=6)
     halo = m.Group(*(m.Sphere(midden, radius=r, resolution=(24, 12)).set_fill(LICHT, 0).set_stroke(width=0)
                      for r in np.linspace(*HALO_STRAAL, HALO_LAGEN)))
@@ -145,3 +151,27 @@ def pomp(tempo):
     schroef = m.Group(mat(blad, 0.6), mat(as_, 0.6))
     schroef.add_updater(lambda s, dt: s.rotate(k * tempo.get_value() * dt, m.UP, about_point=c))
     return m.Group(huis, randen, schroef)
+
+
+# ── Een stukje koperdraad van binnen: koperionen met vrije elektronen ──────
+def rooster():
+    """Metaalrooster: positieve koperionen (oranje) op vaste plekken."""
+    return m.Group(*(mat(m.Sphere([x, y, z], radius=0.17, resolution=(12, 6)), 1, ORANJE, 0.4, 0.8)
+                     for x in np.arange(-3, 3.1, 1.0) for y in (-1, 0, 1) for z in (-1, 0, 1)))
+
+
+def vrije_elektronen(n, rng, drift=0.0):
+    """Gele bolletjes die kriskras tussen de ionen door schieten. drift > 0: netto heel traag naar +x (er loopt
+    stroom); wie rechts uit het stukje draad verdwijnt, komt links weer binnen."""
+    e = m.Group(*(m.Sphere([rng.uniform(-3.3, 3.3), rng.uniform(-1.3, 1.3), rng.uniform(-1.3, 1.3)], radius=0.06,
+                           resolution=(8, 4)).set_fill(ELEKTRON_KLEUR, 1).set_stroke(width=0) for _ in range(n)))
+
+    def beweeg(g, dt):
+        for d in g:
+            p = d.get_center() + rng.normal(0, 0.45 * np.sqrt(dt), 3) + [drift * dt, 0, 0]
+            p = np.clip(p, [-3.4 - drift, -1.4, -1.4], [3.4 + drift, 1.4, 1.4])
+            if p[0] > 3.4:
+                p[0] -= 6.8
+            d.move_to(p)
+    e.add_updater(beweeg)
+    return e

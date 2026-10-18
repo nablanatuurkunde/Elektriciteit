@@ -16,8 +16,9 @@ from pathlib import Path
 import av
 import imageio_ffmpeg
 
-DELEN = [  # (scènebestand, scèneklasse), in de volgorde van de film
+DELEN = [  # (scènebestand, scèneklasse) in de volgorde van de film; scèneklasse None = kant-en-klaar filmpje
     ("scenes/00_intro.py", "Intro"),
+    ("assets/Intro.mov", None),  # Nabla-logo, met geluid
     ("scenes/01_lading.py", "Lading"),
     ("scenes/02_waterkring.py", "Waterkring"),
     ("scenes/03_stroom.py", "Stroom"),
@@ -81,25 +82,44 @@ def verschuif(srt, offset):
 assert verschuif("1\n00:00:01,500 --> 00:00:03,000\nHallo\n", 61.25) == [["00:01:02,750 --> 00:01:04,250", "Hallo"]]
 
 
+def bestand(scene, naam):
+    """Het videobestand van een deel: de render, of het kant-en-klare filmpje zelf."""
+    return Path(scene) if naam is None else VIDEOS / f"{naam}.mp4"
+
+
+def heeft_geluid(pad):
+    with av.open(str(pad)) as v:
+        return any(s.type == "audio" for s in v.streams)
+
+
 def plak():
-    lijst = VIDEOS / "_film.txt"
-    lijst.write_text("".join(f"file '{naam}.mp4'\n" for _, naam in DELEN), encoding="utf8")
     film = VIDEOS / f"{FILM}.mp4"
-    totaal = sum(duur(VIDEOS / f"{naam}.mp4") for _, naam in DELEN)
-    # Eén keer hercoderen naar vaste 60 beelden/s (crf 16: nauwelijks te zien). Zonder hercoderen klopt de duur
-    # niet: manimgx schrijft een stilstand als één lang beeld, en dat raakt bij het plakken zoek. Om dezelfde reden
-    # houden we het laatste beeld vast (tpad) en knippen we exact af op de totale duur (-t).
-    subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", "-f", "concat", "-safe", "0",
-                    "-i", str(lijst), "-vf", "fps=60,tpad=stop_mode=clone:stop_duration=10", "-t", f"{totaal:.3f}",
-                    "-c:v", "libx264", "-crf", "16", "-preset", "fast", "-pix_fmt", "yuv420p", str(film)], check=True)
-    lijst.unlink()
+    bronnen = [bestand(s, n) for s, n in DELEN]
+    duren = [duur(b) for b in bronnen]
+    # Eén keer hercoderen naar vaste 60 beelden/s (crf 16: nauwelijks te zien). Per deel: het laatste beeld vasthouden
+    # (tpad) en exact afknippen op zijn duur (trim), want manimgx schrijft een stilstand als één lang beeld, en dat
+    # raakt bij het plakken anders zoek. Delen zonder geluid (de renders) krijgen stilte, zodat het logo zijn geluid
+    # houdt.
+    filters, invoer = [], []
+    for i, (b, d) in enumerate(zip(bronnen, duren)):
+        invoer += ["-i", str(b)]
+        filters.append(f"[{i}:v]fps=60,scale=1920:1080,setsar=1,format=yuv420p,"
+                       f"tpad=stop_mode=clone:stop_duration=10,trim=duration={d:.4f},setpts=PTS-STARTPTS[v{i}]")
+        filters.append(f"[{i}:a]aformat=sample_rates=48000:channel_layouts=stereo,apad,atrim=duration={d:.4f},"
+                       f"asetpts=PTS-STARTPTS[a{i}]" if heeft_geluid(b) else
+                       f"anullsrc=r=48000:cl=stereo,atrim=duration={d:.4f}[a{i}]")
+    filters.append("".join(f"[v{i}][a{i}]" for i in range(len(bronnen))) + f"concat=n={len(bronnen)}:v=1:a=1[v][a]")
+    subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", *invoer,
+                    "-filter_complex", ";".join(filters), "-map", "[v]", "-map", "[a]",
+                    "-c:v", "libx264", "-crf", "16", "-preset", "fast", "-pix_fmt", "yuv420p",
+                    "-c:a", "aac", "-b:a", "192k", str(film)], check=True)
 
     blokken, offset = [], 0.0
-    for _, naam in DELEN:
+    for (_, naam), d in zip(DELEN, duren):
         srt = VIDEOS / f"{naam}.srt"
-        if srt.exists():
+        if naam and srt.exists():
             blokken += verschuif(srt.read_text(encoding="utf8"), offset)
-        offset += duur(VIDEOS / f"{naam}.mp4")
+        offset += d
     (VIDEOS / f"{FILM}.srt").write_text(
         "\n".join(f"{n}\n" + "\n".join(b) + "\n" for n, b in enumerate(blokken, 1)), encoding="utf8")
     print(f"Klaar: {film} ({offset / 60:.1f} minuten) en {FILM}.srt")
@@ -108,5 +128,6 @@ def plak():
 if __name__ == "__main__":
     VIDEOS.mkdir(exist_ok=True)
     for scene, naam in DELEN:
-        render(scene, naam, "--opnieuw" in sys.argv)
+        if naam:  # kant-en-klare filmpjes hoeven niet gerenderd te worden
+            render(scene, naam, "--opnieuw" in sys.argv)
     plak()
