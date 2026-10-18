@@ -18,13 +18,15 @@ import imageio_ffmpeg
 
 DELEN = [  # (scènebestand, scèneklasse), in de volgorde van de film
     ("scenes/00_intro.py", "Intro"),
-    ("scenes/01_waterkring.py", "Waterkring"),
-    ("scenes/02_stroom.py", "Stroom"),
-    ("scenes/03_spanning.py", "Spanning"),
-    ("scenes/04_weerstand.py", "Weerstand"),
-    ("scenes/05_serie_parallel.py", "SerieParallel"),
-    ("scenes/06_vermogen.py", "Vermogen"),
-    ("scenes/07_sensoren.py", "Sensoren"),
+    ("scenes/01_lading.py", "Lading"),
+    ("scenes/02_waterkring.py", "Waterkring"),
+    ("scenes/03_stroom.py", "Stroom"),
+    ("scenes/04_spanning.py", "Spanning"),
+    ("scenes/05_weerstand.py", "Weerstand"),
+    ("scenes/06_serie_parallel.py", "SerieParallel"),
+    ("scenes/07_vermogen.py", "Vermogen"),
+    ("scenes/08_sensoren.py", "Sensoren"),
+    ("scenes/09_thuis.py", "Thuis"),
 ]
 VIDEOS = Path("videos")
 FILM = "Elektriciteit"

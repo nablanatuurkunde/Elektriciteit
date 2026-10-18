@@ -6,7 +6,7 @@ Opbouw: haakvraag → energie per lading (3D: hoogte, 6 J per coulomb) → ladin
 een joule-teller → E = P · t → één toetsvraag (de serielamp) → waarom de kWh bestaat (waterkoker) → terug naar de
 haakvraag en een samenvattingskaart.
 
-Run vanuit de repo-root:  python -m manimgx render scenes/06_vermogen.py -o videos/Vermogen.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/07_vermogen.py -o videos/Vermogen.mp4
 """
 import numpy as np
 import manimgx as m

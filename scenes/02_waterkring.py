@@ -6,7 +6,7 @@ elektronen), twee misconcepties ("de lamp verbruikt elektronen", "elektronen moe
 terug naar de echte kring en een samenvatting. Dan de overgang naar het schema: de camera gaat naar het
 bovenaanzicht, batterij en lamp vloeien ter plekke over in hun symbool en de draden worden rechte lijnen.
 
-Run vanuit de repo-root:  python -m manimgx render scenes/01_waterkring.py -o videos/Waterkring.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/02_waterkring.py -o videos/Waterkring.mp4
 """
 import numpy as np
 import manimgx as m

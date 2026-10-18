@@ -1,10 +1,10 @@
-"""Spanning als hoogte: het schema uit 02_stroom.py wordt 3D; de hoogte van elk punt laat zien hoe 'hoog' de stroom daar zit.
+"""Spanning als hoogte: het schema uit 03_stroom.py wordt 3D; de hoogte van elk punt laat zien hoe 'hoog' de stroom daar zit.
 
 De batterij tilt omhoog (− onder, + boven), de draden zijn vlak, de lamp is een helling naar beneden (weerstand).
 De stroompijltjes lopen overal even snel: de stroomsterkte verandert niet. Een spanningsmeter staat parallel
 en meet het hoogteverschil tussen twee punten: 1,5 V over de lamp, 0 V over een stuk draad.
 
-Run vanuit de repo-root:  python -m manimgx render scenes/03_spanning.py -o videos/Spanning.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/04_spanning.py -o videos/Spanning.mp4
 """
 import numpy as np
 import manimgx as m
@@ -15,9 +15,9 @@ class Spanning(Les):
     def construct(self):
         self.add(*zon_en_schemer())
         opgetild = m.ValueTracker(0)
-        tempo = m.ValueTracker(2 * LUS.lengte / int(LUS.lengte / 0.3))  # zelfde tempo als in 02_stroom.py
+        tempo = m.ValueTracker(2 * LUS.lengte / int(LUS.lengte / 0.3))  # zelfde tempo als in 03_stroom.py
 
-        # ── Begin: het schema waarop 02_stroom.py eindigt (bovenaanzicht zonder perspectief) ──
+        # ── Begin: het schema waarop 03_stroom.py eindigt (bovenaanzicht zonder perspectief) ──
         self.set_camera_orientation(phi=0, theta=-90 * m.DEGREES, zoom=1.4, frame_center=[-0.5, 0, Z],
                                     focal_distance=400)
         sch = schema(met_meter=True)

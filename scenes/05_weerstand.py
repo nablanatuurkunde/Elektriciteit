@@ -1,11 +1,12 @@
-"""Weerstand en de wet van Ohm, in de hoogte-kring uit 03_spanning.py.
+"""Weerstand en de wet van Ohm, in de hoogte-kring uit 04_spanning.py.
 
-Begint waar 03_spanning.py eindigt. Waarom zakt de stroom over de lamp? Weerstand. Alles heeft een beetje weerstand,
-maar bij draden is die te verwaarlozen. Wat weerstand is (R, ohm), wat een weerstand (onderdeel) doet, met de
+Begint waar 04_spanning.py eindigt. Waarom zakt de stroom over de lamp? Weerstand. Alles heeft een beetje weerstand,
+maar bij draden is die te verwaarlozen. Wat weerstand is (R, ohm); waar de weerstand van een draad van afhangt
+(R = ρ·ℓ/A, soortelijke weerstand), geleiders en isolatoren; wat een weerstand (onderdeel) doet, met de
 zigzag als symbool. Dan de wet van Ohm, visueel: spanning ×2 → hogere batterij én pijltjes 2× zo snel;
-weerstand ×2 → pijltjes half zo snel. U = I · R geldt altijd; bij een lamp verandert R zelf wel.
+weerstand ×2 → pijltjes half zo snel. U = I · R geldt altijd; bij een lamp verandert R zelf wel (geen ohmse weerstand).
 
-Run vanuit de repo-root:  python -m manimgx render scenes/04_weerstand.py -o videos/Weerstand.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/05_weerstand.py -o videos/Weerstand.mp4
 """
 import numpy as np
 import manimgx as m
@@ -41,6 +42,11 @@ def in_3d(p, h, stijf):
     return np.array([x, y, z + (h if y > 0 else 0)])  # draden: vlak, achter boven en voor onder
 
 
+def draadje(lengte, dikte, kleur=ORANJE):
+    """Getekend stukje draad (2D, voor op het doek): koper is oranje."""
+    return m.RoundedRectangle(width=lengte, height=dikte, corner_radius=dikte / 2).set_stroke(width=0).set_fill(kleur, 1)
+
+
 def ohm_regels(U, I, R):
     return [waarde("U", U, "V"), waarde("I", I, "A"), waarde("R", R, r"\Omega", decimalen=0)]
 
@@ -50,7 +56,7 @@ class Weerstand(Les):
         self.add(*zon_en_schemer())
         h, stijf = m.ValueTracker(H), m.ValueTracker(1)
         stap = LUS.lengte / int(LUS.lengte / 0.3)
-        tempo = m.ValueTracker(2 * stap)  # zelfde tempo als in 02_stroom.py en 03_spanning.py
+        tempo = m.ValueTracker(2 * stap)  # zelfde tempo als in 03_stroom.py en 04_spanning.py
         naar_3d = lambda p: in_3d(p, h.get_value(), stijf.get_value())
 
         def til_op(mob, zicht=None):
@@ -81,7 +87,7 @@ class Weerstand(Les):
             self.play(m.Indicate(kopie, color=kleur, scale_factor=1.1), run_time=duur)
             self.remove(kopie)
 
-        # ── Begin: zoals 03_spanning.py eindigt ──
+        # ── Begin: zoals 04_spanning.py eindigt ──
         self.set_camera_orientation(phi=65 * m.DEGREES, theta=-62 * m.DEGREES, zoom=1.25, frame_center=[0.6, 0, 0.8],
                                     focal_distance=20)
         sch = schema()
@@ -127,6 +133,66 @@ class Weerstand(Les):
         self.hud(eenheid)
         self.play(m.FadeIn(eenheid), run_time=d)
 
+        # ── Weerstand van een draad: lengte, doorsnede, materiaal → R = ρ·ℓ/A (op een doek, de kring erachter) ──
+        doek = m.FullScreenRectangle(fill_color=BG, fill_opacity=0.94, stroke_width=0)
+
+        def rij(uitleg, dr, uitkomst, y):
+            """Eén regel: uitleg rechts uitgelijnd op x = -2, het draadje vanaf x = -1,6, de uitkomst op x = 3,4."""
+            t = tekst(uitleg, LABEL).move_to([-2.0, y, 0], aligned_edge=m.RIGHT)
+            dr.move_to([-1.6, y, 0], aligned_edge=m.LEFT)
+            return m.VGroup(t, dr, formule(uitkomst).move_to([3.4, y, 0], aligned_edge=m.LEFT))
+
+        rijen = [rij("lengte ℓ, doorsnede A", draadje(2.0, 0.22), r"R", 2.6),
+                 rij("twee keer zo lang", draadje(4.0, 0.22), r"2R", 1.7),
+                 rij("dubbele doorsnede", draadje(2.0, 0.31), r"\frac{1}{2} R", 0.8),  # 2× oppervlak: √2× zo dik
+                 rij("ander materiaal", draadje(2.0, 0.22, GEDEMPT), r"\rho", -0.1)]
+        rho = formule(r"R = \rho \cdot \frac{\ell}{A}", size=FORMULE + 6).move_to([0, -1.3, 0])
+        d = zeg(self, "Waar hangt de weerstand van een draad eigenlijk van af? Van drie dingen: "
+                      "de lengte, de dikte en het materiaal.")
+        self.play(m.FadeOut(eenheid), *self.toon(doek), run_time=SNEL)
+        self.doe(d - SNEL, *self.toon(rijen[0]))
+        d = zeg(self, "Maak je de draad twee keer zo lang, dan moeten de elektronen een twee keer zo lange weg vol "
+                      "botsingen afleggen: twee keer zoveel weerstand.")
+        self.doe(d, *self.toon(rijen[1]))
+        d = zeg(self, "Maak je de doorsnede twee keer zo groot, dan zijn er twee keer zoveel wegen naast elkaar: "
+                      "de weerstand halveert.")
+        self.doe(d, *self.toon(rijen[2]))
+        d = zeg(self, "En het materiaal telt mee. Dat zit in de soortelijke weerstand, met de Griekse letter rho. "
+                      "Die zoek je op in Binas.")
+        self.doe(d, *self.toon(rijen[3]))
+        d = zeg(self, "Samen: de weerstand is rho maal de lengte, gedeeld door de doorsnede. "
+                      "De lengte in meter, de doorsnede in vierkante meter.")
+        self.doe(d, *self.toon(rho))
+
+        voorbeeld = m.VGroup(
+            m.VGroup(tekst("koperdraad in huis:", LABEL), formule(komma(r"\ell = 1\ \mathrm{m},\quad A = 1,5\ \mathrm{mm^2}")))
+            .arrange(m.RIGHT, buff=0.3),
+            formule(komma(r"\rho_{koper} = 17 \cdot 10^{-9}\ \Omega\,\mathrm{m}")),
+            formule(komma(r"R = 17 \cdot 10^{-9} \cdot \frac{1}{1,5 \cdot 10^{-6}} \approx 0,011\ \Omega")),
+        ).arrange(m.DOWN, buff=0.45).move_to([0, 1.3, 0])
+        d = zeg(self, "Een koperdraad in huis: 1 meter lang, met een doorsnede van 1,5 vierkante millimeter. "
+                      "Koper heeft een soortelijke weerstand van 17 maal 10 tot de min 9 ohm meter.")
+        self.play(*(m.FadeOut(x) for x in (*rijen, rho)), run_time=SNEL)
+        self.doe(d - SNEL, *self.toon(voorbeeld[0], voorbeeld[1]))
+        d = zeg(self, "Dat geeft maar 0,011 ohm: ongeveer een honderdste ohm. "
+                      "Daarom mogen we de weerstand van draden bijna altijd verwaarlozen.")
+        self.doe(d, *self.toon(voorbeeld[2]))
+
+        # geleider en isolator: een kabel met een koperen kern in een plastic mantel
+        mantel = draadje(6.0, 0.9, GEDEMPT).set_fill(opacity=0.45)
+        kabel = m.VGroup(mantel, draadje(6.4, 0.3).move_to(mantel)).move_to([0.5, 0.6, 0])
+        kabel_labels = m.VGroup(
+            tekst("geleider: koper", LABEL, ORANJE).next_to(kabel, m.UP, buff=0.35).align_to(kabel, m.LEFT),
+            tekst("isolator: plastic", LABEL).next_to(kabel, m.DOWN, buff=0.35).align_to(kabel, m.LEFT))
+        d = zeg(self, "Metalen zoals koper hebben een heel kleine soortelijke weerstand. Ze hebben veel vrije "
+                      "elektronen, en laten de stroom makkelijk door: dat zijn geleiders.")
+        self.play(m.FadeOut(voorbeeld), run_time=SNEL)
+        self.doe(d - SNEL, *self.toon(kabel[1], kabel_labels[0]))
+        d = zeg(self, "Stoffen als plastic, glas en rubber hebben een soortelijke weerstand die miljarden keren groter "
+                      "is. Er loopt vrijwel geen stroom doorheen: dat zijn isolatoren. Daarom zit er om elke koperdraad "
+                      "een laagje plastic.")
+        self.doe(d, *self.toon(kabel[0], kabel_labels[1]))
+
         # ── Het onderdeel 'weerstand', met zigzag ──
         zigzag = til_op(plaats(weerstand_zigzag(), [RECHTS, -LENGTE / 2, Z], [RECHTS, LENGTE / 2, Z]), zicht_zz)
         d = zeg(self, "Soms wil je met opzet weerstand in een kring, bijvoorbeeld om de stroom klein te houden "
@@ -135,7 +201,7 @@ class Weerstand(Les):
         maskers.append(MASKER_WEERSTAND)
         self.add(zigzag)
         self.move_camera(theta=-70 * m.DEGREES, frame_center=[RECHTS - 0.2, 0, 0.6], zoom=1.6, added_anims=[
-            m.FadeOut(eenheid), zicht_lamp.animate.set_value(0), zicht_zz.animate.set_value(1),
+            *(m.FadeOut(x) for x in (doek, kabel, kabel_labels)), zicht_lamp.animate.set_value(0), zicht_zz.animate.set_value(1),
             stijf.animate.set_value(0)],
             run_time=d)
         self.remove(lamp_s)
@@ -180,6 +246,9 @@ class Weerstand(Les):
         self.play(m.Indicate(wet[1][0], color=U_KLEUR), run_time=d)
         d = zeg(self, "Let wel op: R zelf kan veranderen. Een lamp krijgt meer weerstand als hij heet wordt. "
                       "Een gewone weerstand houdt steeds dezelfde R.")
+        self.wait(d)
+        d = zeg(self, "Zo'n onderdeel, waarvan de weerstand altijd hetzelfde blijft, heet een ohmse weerstand. "
+                      "Een lamp is dus géén ohmse weerstand.")
         self.wait(d)
         zeg(self, "")
         self.wait(2)

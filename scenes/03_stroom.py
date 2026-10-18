@@ -1,11 +1,11 @@
 """Stroom: richting (afspraak, andersom dan de elektronen), stroomsterkte met de waterleiding, en de stroommeter.
 
-Begint met het schema waarop 01_waterkring.py eindigt. Stroom = witte pijltjes die door de kring trekken;
+Begint met het schema waarop 02_waterkring.py eindigt. Stroom = witte pijltjes die door de kring trekken;
 de symbolen maskeren ze (een pijltje vervaagt waar het onder een symbool door gaat). Daarna 3D: een vlak dwars
 op de leiding telt het water dat erdoor gaat (I = water per seconde), dan de stroommeter in 3D en als symbool.
 Water en stroom gaan dezelfde kant op: van + door de lamp naar −; de elektronen andersom.
 
-Run vanuit de repo-root:  python -m manimgx render scenes/02_stroom.py -o videos/Stroom.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/03_stroom.py -o videos/Stroom.mp4
 """
 import numpy as np
 import manimgx as m

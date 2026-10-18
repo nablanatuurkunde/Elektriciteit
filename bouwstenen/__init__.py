@@ -2,8 +2,8 @@
 
 stijl.py       alle looks: kleuren, letters, maten, materiaal, tempo   ← hier pas je het uiterlijk aan
 symbolen.py    2D-schemasymbolen (Binas) en het tekenen van schakelingen
-kring.py       de tafelkring van video 1–4: rondgang, schema, maskeren, hoogte-kring
-schakeling.py  schakelingen met meerdere onderdelen en vertakkingen (video 5–7)
+kring.py       de tafelkring van video 2–5: rondgang, schema, maskeren, hoogte-kring
+schakeling.py  schakelingen met meerdere onderdelen en vertakkingen (video 6–9)
 modellen.py    3D-modellen: batterij, tafellamp, pomp, waterrad, belichting
 verhaal.py     ondertitels (zeg), panelen, kaarten en Les, de basis voor elke video
 """

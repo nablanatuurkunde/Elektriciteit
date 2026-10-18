@@ -109,6 +109,24 @@ def schakelaar_stand(hoek):
                     m.Dot(0.3 * m.LEFT, radius=0.05), m.Dot(0.3 * m.RIGHT, radius=0.05)).set_stroke(TEKST, STREEP)
 
 
+def zekering(doorgebrand=False):
+    """Zekering: rechthoek met een draadje erdoor; doorgebrand is het draadje in het midden onderbroken."""
+    draadje = ([m.Line(0.3 * m.LEFT, 0.08 * m.LEFT), m.Line(0.08 * m.RIGHT, 0.3 * m.RIGHT)] if doorgebrand
+               else [m.Line(0.3 * m.LEFT, 0.3 * m.RIGHT)])
+    return _symbool(0.3, m.Rectangle(width=0.6, height=0.22, fill_color=BG, fill_opacity=1), *draadje)
+
+
+def motor():
+    return meter("M")
+
+
+def aarde(p):
+    """Aardesymbool met de aansluiting bovenaan op punt p."""
+    p = np.asarray(p, float)
+    streepjes = [m.Line(p + [-b, -0.25 - 0.1 * i, 0], p + [b, -0.25 - 0.1 * i, 0]) for i, b in enumerate((0.25, 0.16, 0.07))]
+    return m.VGroup(m.Line(p, p + [0, -0.25, 0]), *streepjes).set_stroke(TEKST, STREEP)
+
+
 def wisselbron():
     """Wisselspanningsbron (bijvoorbeeld het stopcontact): cirkel met een golfje."""
     xs = np.linspace(-0.17, 0.17, 25)

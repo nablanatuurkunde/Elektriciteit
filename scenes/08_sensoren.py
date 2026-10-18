@@ -3,11 +3,11 @@
 Eén kring: batterij (6 V) links, lamp (4 Ω) rechts, en bovenin een vrije plek waar de onderdelen één voor één
 in- en uitvloeien. Het beeld volgt de tekst: steeds staat het besproken onderdeel in de kring, met een zon
 (licht) of thermometer (temperatuur) erbij, en een paneel met de weerstand en de stroom die daaruit volgt
-(I = U / (R + R_lamp)). Stroompijltjes: vaste snelheid, dichtheid = stroom (zoals in 05_serie_parallel.py);
+(I = U / (R + R_lamp)). Stroompijltjes: vaste snelheid, dichtheid = stroom (zoals in 06_serie_parallel.py);
 bij geen stroom staan ze stil en vervagen ze. Voor de LED komt er een weerstand op de plek van de lamp; de LED
 geeft alleen licht als er stroom loopt, en wisselt daarna van kleur (LED's bestaan in allerlei kleuren).
 
-Run vanuit de repo-root:  python -m manimgx render scenes/07_sensoren.py -o videos/Sensoren.mp4
+Run vanuit de repo-root:  python -m manimgx render scenes/08_sensoren.py -o videos/Sensoren.mp4
 """
 import numpy as np
 import manimgx as m
