@@ -191,7 +191,7 @@ class Vermogen(Les):
                       "joule per seconde.")
         self.doe(d, *self.toon(r_pet))
 
-        # ── Toetsvraag: de serielamp (de kring wordt even de serieschakeling uit de vorige video) ──
+        # ── Toetsvraag: de serielamp (de kring wordt even de serieschakeling van hiervoor) ──
         sch_s, A_s, B_s, routes_s = serie()
         for lamp_s in (A_s, B_s):
             lamp_s["helder"].set_value(helderheid(3))
@@ -292,6 +292,6 @@ class Vermogen(Les):
         self.play(sch.zicht.animate.set_value(1), run_time=SNEL)
         self.hud(achter_s)
         self.play(m.FadeIn(achter_s), licht_zicht.animate.set_value(1), run_time=SNEL)
-        self.play(m.LaggedStart(*(self.toon(r)[0] for r in regels), lag_ratio=0.4), run_time=max(d - 3 * SNEL, 1.5))
+        self.na_elkaar(regels, max(d - 3 * SNEL, 1.5))
         zeg(self, "")
         self.wait(3)

@@ -95,7 +95,7 @@ class Waterkring(Les):
         self.play(*self.toon(tabel[0][2]), run_time=d / 2)
         self.play(*self.toon(tabel[0][3]), run_time=d / 2)
         d = zeg(self, "Eén ding valt op: het water stroomt precies de andere kant op dan de elektronen. "
-                      "Waarom we dat zo tekenen, zie je in de volgende video.")
+                      "Waarom we dat zo tekenen, zie je zo meteen.")
         self.wait(d)
 
         # ── 5. Misconceptie: "eerst moet het water helemaal rondreizen" ──
@@ -141,8 +141,7 @@ class Waterkring(Les):
                              "Draden zitten al vol: de lamp brandt meteen.", size=KLEIN + 2)
         d = zeg(self, "Samengevat: alleen in een gesloten kring stromen elektronen. De batterij duwt ze rond, "
                       "de lamp verbruikt ze niet, en omdat de draden al vol zitten, brandt de lamp meteen.")
-        self.play(m.LaggedStart(*(self.toon(r)[0] for r in samenvatting[0]), *self.toon(samenvatting[1]), lag_ratio=0.3),
-                  run_time=d)
+        self.na_elkaar(samenvatting[0], d, *self.toon(samenvatting[1]))
         return dict(lamp_delen=lamp_delen, bat_delen=bat_delen, licht=licht2, halo=halo2, elektronen=e,
                     min_=min_, plus=plus, samenvatting=samenvatting, labels=m.VGroup(mi, pl))
 

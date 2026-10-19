@@ -279,7 +279,6 @@ class Sensoren(Les):
         d = zeg(self, "Samengevat:")
         self.play(m.FadeOut(kleuren), run_time=SNEL)
         self.hud(samen[0])
-        self.play(m.FadeIn(samen[0]), m.LaggedStart(*(self.toon(r)[0] for r in samen[1]), lag_ratio=0.3),
-                  run_time=max(d, 3))
+        self.na_elkaar(samen[1], max(d, 3), m.FadeIn(samen[0]))
         zeg(self, "")
         self.wait(3)

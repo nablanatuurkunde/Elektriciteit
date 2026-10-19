@@ -1,0 +1,428 @@
+SCRIPT – alle gesproken tekst (ondertitels), in de volgorde van de film
+
+Kopjes (##) zijn de onderdelen van elke video. Het getal tussen [ ] is de regel in het scènebestand waar de zin
+staat: laat dat staan, dan kan ik je aanpassingen terugzetten. Zinnen mag je herschrijven, weghalen of toevoegen
+(nieuwe zin: geef hem geen nummer, zet hem gewoon op de plek waar hij moet komen).
+
+
+======================================================================
+INTRO   (scenes/00_intro.py)
+======================================================================
+
+## De kamer: knopje om, lamp meteen aan
+[77] Je drukt op het lichtknopje, en de lamp gaat aan.
+[82] Meteen. Je denkt er nooit over na.
+
+## Het snoer: een halve meter
+[91] Maar hier zit iets vreemds. Tussen het knopje en de lamp zit zo'n halve meter snoer.
+
+## In het snoer: het koperrooster uit video 1
+[97] In dat snoer zit koperdraad, met heel veel vrije elektronen.
+[121] Loopt er stroom, dan schuiven die elektronen allemaal een kant op. Maar heel langzaam: gemiddeld maar een paar honderdste millimeter per seconde.
+[127] Een elektron dat bij het knopje vertrekt, doet er zo'n drie uur over om bij de lamp te komen.
+
+## Toch brandt de lamp meteen: de vraag
+[132] Toch brandt de lamp binnen een fractie van een seconde.
+[137] Hoe kan dat?
+[145] Denk je het antwoord al te weten? Pauzeer even en probeer het voor jezelf te formuleren.
+[147] Zo niet, geen probleem: dat is precies waar we naartoe werken. Straks, bij de waterkring, komt het antwoord.
+
+## De reeks: het schema uit de video's, met het overzicht
+[159] In deze reeks bouwen we elektriciteit op vanaf de grond.
+[163] Eerst lading, de waterkring en stroom. Dan spanning en weerstand.
+[165] Daarna schakelingen in serie en parallel, vermogen, sensoren, en de elektriciteit in je eigen huis.
+[167] Aan het eind kun je elke schakeling op het vwo-examen ontleden, en snap je ook waarom het werkt.
+
+## Naar zwart: in de film volgt het Nabla-logo (assets/Intro.mov)
+
+
+======================================================================
+[Nabla-logo: assets/Intro.mov]
+======================================================================
+
+
+======================================================================
+LADING   (scenes/01_lading.py)
+======================================================================
+
+## Haak
+[82] In je telefoon zit een lithium-ion-accu. Maar wat is eigenlijk een ion? En wat is lading? Daar beginnen we mee, want alles in deze reeks draait om lading die beweegt.
+
+## Het atoom
+[89] Alles om je heen is gemaakt van atomen. Een atoom heeft een kern van protonen en neutronen, met daaromheen elektronen. Dit is een lithiumatoom.
+[92] Protonen zijn positief geladen, elektronen negatief. Neutronen hebben geen lading.
+
+## Elementaire lading
+[100] De lading van een proton is precies even groot als die van een elektron, alleen met een ander teken. Die kleinste hoeveelheid lading heet de elementaire lading, e.
+[103] Lading meet je in coulomb. In Binas vind je: e is 1,602 maal 10 tot de min 19 coulomb.
+
+## Neutraal
+[109] Dit lithiumatoom heeft 3 protonen en 3 elektronen. Plus 3 e en min 3 e: samen nul. Het atoom is neutraal.
+
+## Positief ion: een elektron vliegt weg
+[118] Haal er één elektron af. Nu zijn er 3 protonen, maar nog maar 2 elektronen: het atoom is positief geladen, plus e.
+[123] Een atoom met een lading noemen we een ion. Dit is een lithium-ion: precies het deeltje dat in je accu heen en weer schuift als je hem oplaadt en weer gebruikt.
+
+## Negatief ion: er komen elektronen bij
+[136] Krijgt een atoom er juist elektronen bij, dan wordt het een negatief ion. Met 3 protonen en 4 elektronen is de lading min e.
+
+## Q = n·e en de coulomb
+[147] Lading bestaat dus altijd uit een heel aantal elementaire ladingen: Q is n maal e. Een half elektron bestaat niet.
+[151] Hoeveel elektronen zijn samen één coulomb? 1 gedeeld door 1,602 maal 10 tot de min 19: zo'n 6,2 maal 10 tot de 18. Een gigantisch aantal.
+
+## Metaal: vrije elektronen tussen positieve ionen
+[160] In een metaal zoals koper laat elk atoom een elektron los. Die vrije elektronen kunnen door het hele metaal bewegen. Wat overblijft, zijn positieve koperionen, die op hun plek blijven.
+[168] Zonder batterij schieten die vrije elektronen kriskras door elkaar, maar gemiddeld gaan ze nergens heen. Dat verandert als je er een batterij op aansluit: wat er dan gebeurt, zie je zo meteen.
+
+## Ladingsbehoud + samenvatting
+[173] Nog één belangrijke regel: lading kan niet verdwijnen, en ook niet uit het niets ontstaan. Dat heet ladingsbehoud.
+[179] Samengevat:
+
+
+======================================================================
+WATERKRING   (scenes/02_waterkring.py)
+======================================================================
+
+## 1. Voorspellen
+[57] We sluiten een lamp met één koperdraad aan op een batterij.
+[61] Voorspel eerst zelf: gaat de lamp branden? Pauzeer de video en kies: ja of nee.
+
+## 2. Waarnemen
+[66] De lamp blijft uit.
+
+## 3. Verklaren
+[71] In de draad zitten vrije elektronen, maar ze kunnen nergens heen: de weg terug naar de batterij ontbreekt.
+[74] Leggen we een tweede draad, dan is de kring gesloten. Nu kunnen de elektronen rondgaan, en de lamp brandt.
+
+## 4. Analogie: gesloten waterleiding, met vertaaltabel
+[81] Vergelijk de kring met een gesloten waterleiding.
+[88] De lamp is een waterrad,
+[92] de batterij is een pomp,
+[94] de draden zijn de buizen en de elektronen zijn het water.
+[97] Eén ding valt op: het water stroomt precies de andere kant op dan de elektronen. Waarom we dat zo tekenen, zie je zo meteen.
+
+## 5. Misconceptie: "eerst moet het water helemaal rondreizen"
+[102] Belangrijk: de buizen zitten al vol water. Kijk wat er gebeurt als de pomp stopt…
+[104] …en weer aangaat. Hij duwt overal tegelijk: het rad draait meteen, ook al is het water zelf traag.
+
+## 6. Misconceptie: "de lamp verbruikt elektronen"
+[109] Het water raakt niet op in het rad: er stroomt evenveel uit als erin. Zo raken ook de elektronen niet op in de lamp.
+
+## 7. Wat doet de pomp (batterij) dan wel?
+[115] De pomp duwt het water aan de ene kant naar buiten en zuigt het aan de andere kant weer aan.
+[120] Het water komt aan de plus-kant naar buiten. De elektronen doen precies het omgekeerde: zij verlaten de batterij aan de min-kant en komen aan de plus-kant weer binnen.
+
+## 8. Terug naar de echte kring + samenvatting
+[126] Terug naar onze lamp.
+[142] Samengevat: alleen in een gesloten kring stromen elektronen. De batterij duwt ze rond, de lamp verbruikt ze niet, en omdat de draden al vol zitten, brandt de lamp meteen.
+
+## Waarom een schema? Eerst naar het bovenaanzicht
+[151] Zo'n kring telkens netjes natekenen is veel werk. Daarom gebruiken we een schematische weergave: het schakelschema.
+
+## Draden worden rechte lijnen, onderdelen worden symbolen
+[165] Hierin zijn de stroomdraden rechte lijnen, en krijgt elk ander onderdeel een eigen symbool.
+
+## De twee symbolen
+[174] De batterij wordt een spanningsbron: de lange dunne streep is de plus, de korte dikke streep de min.
+[178] De lamp wordt een cirkel met een kruis erin. Hij brandt nog steeds.
+[182] Met zulke symbolen teken je elke stroomkring snel en overzichtelijk.
+
+
+======================================================================
+STROOM   (scenes/03_stroom.py)
+======================================================================
+
+## Begin: het schema van de waterkring (bovenaanzicht zonder perspectief)
+
+## Stroomrichting: een afspraak, andersom dan de elektronen
+[56] Dit is de kring van net. In de draden bewegen elektronen: van de min-pool, door de lamp, naar de plus-pool.
+[59] Toch tekenen we de stroom precies de andere kant op: van plus, door de lamp, naar min.
+[62] Dat is een afspraak van lang geleden, toen nog niemand wist dat er elektronen bestonden.
+[64] Er bewegen in de draad dus geen deeltjes van plus naar min. De stroomrichting is een afspraak: een handig trucje om mee te rekenen.
+[67] Voor het rekenen maakt het niet uit: negatieve lading die de ene kant op gaat, telt hetzelfde als positieve lading die de andere kant op gaat.
+[70] Vanaf nu tekenen we daarom alleen de stroom. Dat is ook de richting waarin ons water stroomde.
+
+## Naar 3D: de waterleiding
+[77] Maar hoeveel stroom loopt er eigenlijk? Daarvoor gaan we terug naar onze waterleiding.
+
+## Stroomsterkte: water door een vlak, per seconde
+[87] Zet op één plek een denkbeeldig vlak dwars op de leiding, zodat al het water erdoorheen moet.
+[125] De stroomsterkte I is de hoeveelheid water die per seconde door dat vlak stroomt. Laten we tellen.
+[130] Er gaan ongeveer twee deeltjes per seconde door het vlak.
+[132] Laat de pomp twee keer zo hard draaien: dan gaat er per seconde twee keer zoveel water door het vlak. De stroom is groter.
+
+## Van water naar lading: I = Q / t in ampère
+[144] In een echte draad tellen we geen water, maar lading. De stroomsterkte is de lading Q die per seconde langs een punt gaat.
+[149] We meten I in ampère, A. Eén ampère is één coulomb lading per seconde.
+
+## De stroommeter: in 3D, in serie
+[156] Om de stroomsterkte te meten, gebruiken we een stroommeter.
+[158] De stroommeter zit ín de leiding: al het water moet erdoorheen. We zeggen: de stroommeter staat in serie.
+
+## Terug naar het schema, nu met het symbool van de stroommeter
+[163] In een schema tekenen we de stroommeter als een cirkel met een A erin.
+[174] De stroom gaat dwars door de stroommeter heen. Zo zie je in elk schema meteen waar de stroom gemeten wordt.
+
+
+======================================================================
+SPANNING   (scenes/04_spanning.py)
+======================================================================
+
+## Begin: het schema waarop 03_stroom.py eindigt (bovenaanzicht zonder perspectief)
+[29] We gaan verder met onze kring, met de stroommeter erin.
+
+## De kring krijgt hoogte
+[38] Tot nu toe lag de kring plat. Nu geven we elk punt van de kring een hoogte.
+[45] De batterij tilt de stroom omhoog: de min-kant ligt onderaan, de plus-kant bovenaan.
+[48] Daarna loopt de stroom over een vlakke draad naar de lamp. Daar gaat het omlaag: de lamp is een helling, omdat hij weerstand heeft.
+[52] Onderaan loopt de stroom vlak terug naar de batterij, die hem weer omhoog tilt. Net als bij het water: de pomp tilt het op, en in het waterrad valt het weer naar beneden.
+
+## De stroomsterkte verandert niet
+[57] Let op: de stroomsterkte verandert nergens. Overal in de kring gaan er per seconde evenveel pijltjes langs, ook op de helling. De stroommeter wijst nog steeds hetzelfde aan.
+
+## Spanning = hoogteverschil
+[68] Hoe hoog de batterij de stroom optilt, noemen we de spanning U. Die meet je in volt, V. Een AA-batterij geeft 1,5 volt.
+
+## De spanningsmeter: parallel, tikt twee punten aan
+[83] Met een spanningsmeter meet je het hoogteverschil tussen twee punten.
+[86] Je zet hem niet ín de kring, maar ernaast: met zijn twee draden tikt hij twee punten aan. Hier: net voor en net na de lamp.
+[89] Hij meet 1,5 volt: de lamp laat de stroom precies zo ver zakken als de batterij hem optilde.
+
+## Twee punten op dezelfde draad: geen hoogteverschil
+[100] Meet je tussen twee punten op dezelfde draad, dan is er geen hoogteverschil: de spanningsmeter geeft 0 volt.
+
+## Het symbool
+[111] In een schema teken je de spanningsmeter als een cirkel met een V erin.
+
+
+======================================================================
+WEERSTAND   (scenes/05_weerstand.py)
+======================================================================
+
+## Begin: zoals 04_spanning.py eindigt
+
+## Waarom zakt de stroom over de lamp?
+[111] Maar waarom verandert de lamp de spanning in de stroomkring?
+[114] De lamp heeft weerstand. In het dunne gloeidraadje botsen de elektronen steeds tegen de atomen. Daarbij geven ze energie af: het draadje wordt heet en geeft licht.
+[118] Die energie komt van de batterij. Daarom zakt de stroom over de lamp naar beneden.
+
+## Alles heeft een beetje weerstand
+[122] Eigenlijk heeft elk onderdeel stiekem een beetje weerstand, ook de draden. Maar bij een goede koperdraad is die zo klein, dat we hem bijna altijd mogen verwaarlozen.
+
+## Wat is weerstand? R in ohm
+[128] Weerstand zegt hoe moeilijk de stroom ergens doorheen komt. Hoe groter de weerstand, hoe meer spanning er nodig is om er een bepaalde stroom door te sturen.
+[131] We geven weerstand aan met R, en meten hem in ohm, met het teken omega. Eén ohm betekent: je hebt één volt nodig voor één ampère.
+
+## Weerstand van een draad: lengte, doorsnede, materiaal → R = ρ·ℓ/A (op een doek, de kring erachter)
+[150] Waar hangt de weerstand van een draad eigenlijk van af? Van drie dingen: de lengte, de dikte en het materiaal.
+[154] Maak je de draad twee keer zo lang, dan moeten de elektronen een twee keer zo lange weg vol botsingen afleggen: twee keer zoveel weerstand.
+[157] Maak je de doorsnede twee keer zo groot, dan zijn er twee keer zoveel wegen naast elkaar: de weerstand halveert.
+[160] En het materiaal telt mee. Dat zit in de soortelijke weerstand, met de Griekse letter rho. Die zoek je op in Binas.
+[163] Samen: de weerstand is rho maal de lengte, gedeeld door de doorsnede. De lengte in meter, de doorsnede in vierkante meter.
+[173] Een koperdraad in huis: 1 meter lang, met een doorsnede van 1,5 vierkante millimeter. Koper heeft een soortelijke weerstand van 17 maal 10 tot de min 9 ohm meter.
+[177] Dat geeft maar 0,011 ohm: ongeveer een honderdste ohm. Daarom mogen we de weerstand van draden bijna altijd verwaarlozen.
+[187] Metalen zoals koper hebben een heel kleine soortelijke weerstand. Ze hebben veel vrije elektronen, en laten de stroom makkelijk door: dat zijn geleiders.
+[191] Stoffen als plastic, glas en rubber hebben een soortelijke weerstand die miljarden keren groter is. Er loopt vrijwel geen stroom doorheen: dat zijn isolatoren. Daarom zit er om elke koperdraad een laagje plastic.
+
+## Het onderdeel 'weerstand', met zigzag
+[198] Soms wil je met opzet weerstand in een kring, bijvoorbeeld om de stroom klein te houden zodat een LED niet kapotgaat. Dan gebruik je een weerstand: een onderdeel met een vaste weerstand.
+[208] In een schema tekenen we hem hier als een zigzaglijn. Deze weerstand heeft 3 ohm.
+
+## De wet van Ohm, visueel
+[219] Met 1,5 volt over 3 ohm loopt er een stroom van 0,5 ampère.
+[223] Wat gebeurt er als we de spanning twee keer zo groot maken? De batterij tilt de stroom twee keer zo hoog, en de stroom gaat twee keer zo hard: 1 ampère.
+[232] En als we de weerstand twee keer zo groot maken, 6 ohm? Dan komt de stroom moeilijker door de weerstand: hij wordt half zo groot, weer 0,5 ampère.
+[240] Dit is de wet van Ohm: de spanning over een onderdeel is de stroom erdoor, maal de weerstand. U is I maal R.
+[244] Deze formule geldt altijd en voor elk onderdeel: de weerstand is gewoon de spanning gedeeld door de stroom.
+[247] Let wel op: R zelf kan veranderen. Een lamp krijgt meer weerstand als hij heet wordt. Een gewone weerstand houdt steeds dezelfde R.
+[250] Zo'n onderdeel, waarvan de weerstand altijd hetzelfde blijft, heet een ohmse weerstand. Een lamp is dus géén ohmse weerstand.
+
+
+======================================================================
+SERIEPARALLEL   (scenes/06_serie_parallel.py)
+======================================================================
+
+## Serie
+[76] Tot nu toe had onze kring één lamp. Wat gebeurt er als we er twee aansluiten?
+[78] Hier staan de lampen in serie: achter elkaar, in één lus. Alle stroom gaat eerst door lamp A en daarna door lamp B.
+[82] Er is maar één weg, dus de stroomsterkte is overal in de kring even groot: 0,75 ampère.
+[87] Kijk nu naar de hoogte. De batterij tilt de stroom 6 volt omhoog. Onderweg zakt hij over twee lampen. Elke lamp krijgt dus maar een deel: 3 volt per lamp.
+[93] In serie verdelen de volts zich over de lampen: dat heet spanningsdeling. Daarom branden ze zwakker dan één lamp alleen.
+[98] Waarom 0,75 ampère? De stroom moet door allebei de lampen, dus in serie tellen de weerstanden op: R totaal is 4 plus 4 is 8 ohm. En 6 volt gedeeld door 8 ohm is 0,75 ampère.
+[102] En als er één lamp kapotgaat? Dan is de lus onderbroken: er kan nergens meer stroom lopen. Alles gaat uit.
+[109] Dat was het probleem van ouderwetse kerstboomverlichting: één lampje stuk, en de hele slinger bleef donker.
+
+## Parallel
+[119] Nu sluiten we dezelfde twee lampen anders aan: parallel. Elke lamp krijgt zijn eigen tak.
+[125] Bij de vertakking splitst de stroom zich: de ene helft van de pijltjes gaat door lamp A, de andere helft door lamp B. Door elke lamp gaat 1,5 ampère, samen 3 ampère door de batterij. Dat heet stroomdeling.
+[132] Wat is nu de totale weerstand? Met twee wegen naast elkaar komt de stroom makkelijker door: de totale weerstand is kleiner dan die van elke lamp apart.
+[135] Bij parallel tel je de omgekeerden op: 1 gedeeld door R totaal is een kwart plus een kwart, is een half. Dus R totaal is 2 ohm. Controle: 6 volt gedeeld door 2 ohm is inderdaad 3 ampère.
+[142] En de spanning? Elke tak begint bovenaan en eindigt onderaan. Over elke lamp staat dus de volle 6 volt. De ampères splitsen, de volts niet.
+[147] Daarom branden parallelle lampen fel: elke lamp krijgt de volledige spanning van de batterij.
+
+## Eén lamp kapot: B houdt zijn 1,5 A, alleen de batterij levert minder (veelgemaakte denkfout)
+[161] Gaat er nu één lamp kapot, dan stopt de stroom in die tak. De andere lamp blijft branden.
+[168] Je zou misschien denken: alle stroom moet nu door lamp B, dus B krijgt de stroom van A erbij. Maar dat klopt niet!
+[171] Over lamp B staat nog steeds 6 volt, en B heeft nog steeds 4 ohm. Dus gaat er nog steeds 6 gedeeld door 4 is 1,5 ampère door B. Lamp B merkt er niets van.
+[174] Wél gaat nu alle stroom door B. Maar dat is minder dan eerst: de batterij levert nu 1,5 ampère in plaats van 3. Kijk maar: de pijltjes op de hoofddraad staan nu half zo dicht.
+[178] De batterij levert dus geen vaste hoeveelheid stroom, maar een vaste spanning. Elke tak neemt zelf de stroom die bij zijn weerstand hoort.
+[181] Vergelijk het met twee kranen aan dezelfde waterleiding: draai je de ene dicht, dan stroomt er uit de andere niet ineens twee keer zoveel. Er gaat alleen minder door de hoofdleiding.
+[184] Zo zijn de stopcontacten in je huis geschakeld: zet je een lamp uit, dan blijft de koelkast gewoon aan.
+
+## Gemengde schakeling: rustig, stap voor stap
+[193] Nu een gemengde schakeling. Lamp A staat in serie met twee lampen B en C, die parallel aan elkaar staan. Alle lampen hebben 4 ohm, de batterij geeft 6 volt.
+[199] Hoeveel stroom levert de batterij? Pauzeer de video en probeer het eerst zelf.
+[205] Pak het stap voor stap aan. Begin met het parallelle deel: B en C samen. 1 gedeeld door R B C is een kwart plus een kwart, is een half. Dus B en C samen hebben 2 ohm.
+[208] Dat deel werkt als één weerstand van 2 ohm, in serie met lamp A. De totale weerstand is dus 4 plus 2 is 6 ohm.
+[211] De stroom uit de batterij is 6 gedeeld door 6 is 1 ampère. Die stroom gaat helemaal door lamp A.
+[217] Kijk weer naar de hoogte. Over A staat I maal R is 1 maal 4 is 4 volt. Er blijft 6 min 4 is 2 volt over, en die staat over B én over C, want die staan parallel.
+[225] Door B en door C gaat dus 2 gedeeld door 4 is 0,5 ampère. Samen weer 1 ampère: de stroom deelt zich, en komt daarna weer samen.
+[230] Daarom brandt A het felst: over A staat de meeste spanning, en door A loopt de meeste stroom.
+
+## Kortsluiting
+[245] Tot slot iets wat je juist níet wilt. Hier is weer één lamp op de batterij.
+[249] Stel dat er per ongeluk een draad zonder weerstand parallel aan de lamp komt te zitten. Over die draad staat vrijwel geen spanning, en dus ook niet over de lamp: de lamp gaat uit.
+[253] En omdat de weerstand bijna nul is, wordt de stroom enorm groot. Dit heet kortsluiting.
+[255] De draden en de batterij worden dan heet, en er kan brand ontstaan. Daarom zitten er in huis zekeringen. Daarover straks meer, bij elektriciteit in huis.
+
+
+======================================================================
+VERMOGEN   (scenes/07_vermogen.py)
+======================================================================
+
+## Haakvraag
+[121] Op elke lamp en elk apparaat staat een getal in watt. Wat betekent dat getal eigenlijk?
+[123] Een lamp zet elektrische energie om in licht en warmte. Hoe snel hij dat doet, noemen we zijn vermogen.
+
+## Energie per lading: de hoogte
+[130] Waar komt die energie vandaan? Kijk weer naar de hoogte. Elke lading die de helling van de lamp afgaat, geeft energie af. 6 volt betekent: 6 joule voor elke coulomb.
+
+## Lading per seconde: de pijltjes
+[138] Hoeveel lading komt er langs? Dat zegt de stroom: 1,5 ampère is 1,5 coulomb per seconde.
+
+## Samen: P = U · I
+[142] Elke seconde komen er dus 1,5 coulomb langs, en elke coulomb geeft 6 joule af. Samen: 6 maal 1,5 is 9 joule per seconde.
+[149] Dat is de formule voor vermogen: P is U maal I. Joule per coulomb maal coulomb per seconde geeft joule per seconde, en dat noemen we watt.
+
+## De watt zichtbaar: 9 bolletjes (joules) per seconde, met een teller
+[157] Deze lamp heeft dus een vermogen van 9 watt.
+[172] Stel dat elk geel bolletje één joule is. Uit de lamp komen er dan precies 9 per seconde. Na 1 seconde is er 9 joule omgezet, na 2 seconden 18, enzovoort.
+
+## E = P · t
+[184] De energie is dus vermogen maal tijd: E is P maal t.
+[188] Brandt de lamp een minuut, dan zet hij 9 maal 60 is 540 joule om.
+[190] Andersom geldt: vermogen is energie gedeeld door tijd. Precies wat watt betekent: joule per seconde.
+
+## Toetsvraag: de serielamp (de kring wordt even de serieschakeling van hiervoor)
+[204] Test jezelf. In de serieschakeling had elke lamp 3 volt en 0,75 ampère. Wat is zijn vermogen? Pauzeer de video en reken het uit.
+[209] 3 maal 0,75 is 2,25 watt: maar een kwart van 9 watt. Kijk: uit elke lamp komen nu maar 2,25 bolletjes per seconde. Daarom brandden die lampen zoveel zwakker.
+
+## Waarom de kilowattuur
+[218] Apparaten in huis zijn veel sterker. Een waterkoker heeft zo'n 2000 watt. Kookt hij 3 minuten, dan zet hij al 360 duizend joule om.
+[229] Zulke grote getallen zijn onhandig. Daarom rekent het energiebedrijf in kilowattuur: de energie van 1 kilowatt die 1 uur aanstaat. Dat is 3,6 miljoen joule.
+[232] De waterkoker van 2 kilowatt, 3 minuten lang, is 0,05 uur: samen 0,1 kilowattuur.
+[234] Let op: reken óf in watt en seconden, dan krijg je joule, óf in kilowatt en uren, dan krijg je kilowattuur.
+
+## Accu's: mAh is lading, Wh is energie
+[249] Op een telefoonaccu of powerbank staat vaak iets anders: bijvoorbeeld 4000 mAh, milliampère-uur. Is dat ook energie? Denk even na.
+[255] Nee! Milliampère maal uur is stroom maal tijd, en stroom maal tijd is lading: Q is I maal t. 4000 milliampère-uur is dus 4 ampère-uur.
+[263] Een mAh-getal zegt dus hoeveel lading de accu kan leveren. Gebruikt je telefoon gemiddeld 0,4 ampère, dan is de accu na 4 gedeeld door 0,4 is 10 uur leeg.
+[270] Maar hoeveel energie zit erin? Daarvoor heb je ook de spanning nodig: elke coulomb krijgt 3,7 joule mee.
+[275] Energie is lading maal spanning: 4 ampère-uur maal 3,7 volt is 14,8 wattuur. Wattuur is, net als kilowattuur, een eenheid van energie.
+[280] Dus: mAh zegt hoeveel lading er in een accu zit, Wh hoeveel energie. Wil je accu's eerlijk vergelijken, kijk dan naar de wattuur.
+
+## Terug naar de haakvraag + samenvatting
+[289] Dus: het getal in watt zegt hoeveel joule een apparaat per seconde omzet. Samengevat:
+
+
+======================================================================
+SENSOREN   (scenes/08_sensoren.py)
+======================================================================
+
+## De kring met een vrije plek bovenin
+
+## Wat er in de kring gebeurt: één regelaar rekent de stroom uit en zet de lamp
+
+## Haakvraag
+[168] Tot nu toe brandde de lamp gewoon zolang de kring dicht was. Maar hoe zet je hem aan en uit? En hoe laat je een kring reageren op licht of warmte?
+
+## Schakelaar
+[173] Het eenvoudigste onderdeel is de schakelaar. Staat hij open, dan is de kring onderbroken: er loopt nergens stroom.
+[177] Klap je hem dicht, dan is de kring gesloten. Meteen loopt overal stroom, en de lamp brandt.
+[179] Weer open: alles stopt. Een schakelaar zet de stroom dus aan of uit, verder niets.
+
+## LDR
+[184] Nu zetten we op die plek een LDR: een weerstand die gevoelig is voor licht. Hoe meer licht erop valt, hoe kleiner zijn weerstand.
+[188] Voorspel: wat doet de lamp als het donker wordt? Denk even na.
+[190] Het wordt donker: de weerstand van de LDR stijgt, de stroom daalt, en de lamp brandt zwakker.
+[192] Komt er weer licht op, dan zakt de weerstand en wordt de lamp weer feller. Het symbool: een weerstand met twee pijltjes van licht erop.
+[195] Zo'n LDR zit bijvoorbeeld in een straatlantaarn die vanzelf aangaat als het donker wordt.
+
+## NTC
+[201] Een NTC reageert niet op licht, maar op temperatuur. Wordt hij warmer, dan daalt zijn weerstand. De N staat voor negatief: warmer geeft minder weerstand.
+[206] Je vindt een NTC in thermometers en thermostaten: de stroom vertelt hoe warm het is.
+
+## PTC
+[212] Een PTC doet precies het omgekeerde. De P staat voor positief: warmer geeft juist méér weerstand.
+[216] Handig als beveiliging: wordt een apparaat te heet, dan remt de PTC de stroom vanzelf af.
+
+## Diode
+[222] Een diode laat de stroom maar in één richting door, zoals een terugslagklep in een waterleiding. Staat hij in de doorlaatrichting, dan loopt de stroom gewoon.
+[227] Het symbool is een pijl met een streep: de pijl wijst de richting waarin de stroom door mag.
+[229] Draai je de diode om, dan staat hij in sperrichting: er loopt geen stroom meer.
+[231] Zo beschermt een diode een apparaat als je de batterijen per ongeluk verkeerd om plaatst.
+
+## LED
+[251] Een LED is een diode die zelf licht geeft: een Light Emitting Diode. Loopt er stroom door, dan geeft hij licht.
+[256] Maar net als een gewone diode laat hij de stroom maar in één richting door. Draai je hem om, dan loopt er geen stroom, en blijft hij donker.
+[259] De goede kant op: weer stroom, en weer licht.
+[267] LED's bestaan in allerlei kleuren: rood, oranje, geel, groen, blauw. En met rood, groen en blauw samen maak je zelfs wit licht, zoals in het scherm van je telefoon.
+[271] En omdat een LED bijna alle energie omzet in licht, is hij veel zuiniger dan een gloeilamp.
+
+## Samenvatting
+[279] Samengevat:
+
+
+======================================================================
+THUIS   (scenes/09_thuis.py)
+======================================================================
+
+## Haak + groep met zekering
+[81] Je zet de waterkoker aan, dan de magnetron, en dan de föhn. En ineens is het donker. Wat is er gebeurd?
+[84] De stopcontacten in een kamer zitten samen in één groep, en zijn parallel geschakeld. Elk apparaat krijgt dus 230 volt, en neemt zijn eigen stroom.
+[96] Hoeveel stroom? Vermogen is spanning maal stroom, dus de stroom is het vermogen gedeeld door de spanning. De waterkoker van 2000 watt neemt 2000 gedeeld door 230 is 8,7 ampère.
+[100] De magnetron van 1000 watt neemt er 4,3 ampère bij. Bij parallel tellen de stromen op: samen 13 ampère.
+[103] En de föhn van 1500 watt nog eens 6,5 ampère. Samen bijna 20 ampère, door dezelfde draden.
+[105] Dat is te veel: de draden zouden te heet worden. De zekering van deze groep laat maximaal 16 ampère door. Daarboven brandt hij door, of schakelt hij uit, en is de groep stroomloos.
+[110] Ook bij kortsluiting, die je eerder zag, wordt de stroom te groot en grijpt de zekering in. De zekering staat in serie met de hele groep: alle stroom gaat erdoorheen.
+[113] Een zekering beschermt dus de draden, tegen te veel stroom. Maar wie beschermt jou?
+
+## Aardlekschakelaar
+[131] Daarvoor is er de aardlekschakelaar. Die vergelijkt de stroom die het huis in gaat met de stroom die terugkomt.
+[136] Normaal is dat precies evenveel: net als bij de waterkring raakt er onderweg niets op.
+[138] Maar stel dat er in de wasmachine een draad loszit en jij het metaal aanraakt. Dan stroomt er een beetje stroom via jouw lichaam naar de aarde. Die komt dus niet terug.
+[141] Is het verschil 30 milliampère of meer, dan schakelt de aardlekschakelaar alles uit, binnen een fractie van een seconde. De zekering beschermt de draden; de aardlekschakelaar beschermt jou.
+
+## Rendement: de elektromotor
+[155] Apparaten zetten elektrische energie om in iets nuttigs, maar nooit helemaal. Neem een elektromotor op een batterij van 6 volt, met een stroom van 1,5 ampère.
+[160] Er gaat 6 maal 1,5 is 9 watt in. Daarvan wordt 6,3 watt beweging. De rest, 2,7 watt, wordt warmte: de motor wordt warm.
+[163] Het rendement, eta, is het nuttige deel gedeeld door wat erin gaat. Hier 6,3 gedeeld door 9: 0,70, oftewel 70 procent. Met energie in plaats van vermogen werkt het precies zo.
+
+## Lampen vergelijken en energie besparen
+[175] Bij lampen zie je het verschil in rendement heel goed. Deze drie lampen geven evenveel licht.
+[180] Een gloeilamp gebruikt 60 watt, waarvan maar ongeveer 3 watt licht wordt: een rendement van 5 procent. De rest is warmte.
+[183] Een spaarlamp geeft hetzelfde licht met 12 watt: een rendement van 25 procent. En een LED met 8 watt: bijna 40 procent.
+[190] Vervang je een gloeilamp door een LED die 3 uur per dag brandt, dan bespaar je 52 watt, elke dag 3 uur lang: per jaar zo'n 57 kilowattuur.
+[193] Bij 30 cent per kilowattuur is dat ongeveer 17 euro per jaar. Per lamp.
+
+## De kWh-meter
+[206] Hoeveel energie je thuis gebruikt, meet de kWh-meter in de meterkast. Hij telt het aantal kilowattuur dat door het huis is gegaan.
+[210] Begin van het jaar staat hij op 12.345. Een jaar later op 15.095. Er is dus 2750 kilowattuur gebruikt: bij 30 cent per kilowattuur zo'n 825 euro.
+
+## Opwekking
+[224] Waar komt die elektrische energie eigenlijk vandaan? In een gascentrale verbrandt gas. Daarmee draaien turbines, en een generator maakt er elektrische energie van.
+[228] Maar ook hier gaat veel verloren: maar ongeveer de helft van de chemische energie wordt elektrische energie. De rest verdwijnt als warmte.
+[231] Een windturbine zet de bewegingsenergie van de wind om, een zonnepaneel de energie van zonlicht: daarvan wordt ongeveer 20 procent elektrische energie. Die bronnen raken niet op.
+
+## Samenvatting
+[241] Samengevat:

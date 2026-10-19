@@ -41,7 +41,7 @@ class Stroom(Les):
         zicht_e, zicht_p, zicht_w = m.ValueTracker(0), m.ValueTracker(0), m.ValueTracker(0)
         maskers = [MASKER_BRON, MASKER_LAMP]
 
-        # ── Begin: het schema uit de vorige video (bovenaanzicht zonder perspectief) ──
+        # ── Begin: het schema van de waterkring (bovenaanzicht zonder perspectief) ──
         self.set_camera_orientation(phi=0, theta=-90 * m.DEGREES, zoom=1.4, frame_center=[-0.5, 0, Z],
                                     focal_distance=400)
         sch = schema()
@@ -53,7 +53,7 @@ class Stroom(Les):
         self.add(sch["gloed"], sch["min_"], sch["plus"], sch["symbolen"], sch["labels"], e, pijlen, w)
 
         # ── Stroomrichting: een afspraak, andersom dan de elektronen ──
-        d = zeg(self, "Dit is de kring uit de vorige video. In de draden bewegen elektronen: "
+        d = zeg(self, "Dit is de kring van net. In de draden bewegen elektronen: "
                       "van de min-pool, door de lamp, naar de plus-pool.")
         self.play(zicht_e.animate.set_value(1), run_time=d)
         d = zeg(self, "Toch tekenen we de stroom precies de andere kant op: van plus, door de lamp, naar min.")

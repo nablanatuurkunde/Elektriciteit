@@ -63,6 +63,12 @@ class Les(m.ThreeDScene):
         self.hud(*mobs)
         return [m.FadeIn(x) for x in mobs]
 
+    def na_elkaar(self, rijen, duur, *erbij):
+        """Rijen één voor één vast in beeld laten invagen, samen `duur` seconden; `erbij` loopt mee met de eerste.
+        Geen LaggedStart: daarin staan de rijen die nog niet aan de beurt zijn al volledig in beeld."""
+        for i, r in enumerate(rijen):
+            self.play(*self.toon(r), *(erbij if i == 0 else ()), run_time=duur / len(rijen))
+
     def doe(self, d, *anims, duur=NORMAAL):
         """Animatie van `duur` seconden, daarna stilstaan tot de zin (d seconden) klaar is: geen trage fades."""
         self.play(*anims, run_time=min(duur, d))

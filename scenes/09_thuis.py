@@ -107,7 +107,7 @@ class Thuis(Les):
         self.play(heel["zicht"].animate.set_value(0), door["zicht"].animate.set_value(1), run_time=SNEL)
         self.doe(d - SNEL, *(a["helder"].animate.set_value(0) for a in (koker, magn, fohn)),
                  tot(r"I_{tot} = 0\ \mathrm{A}"))
-        d = zeg(self, "Ook bij kortsluiting, uit de vorige video, wordt de stroom te groot en grijpt de zekering in. "
+        d = zeg(self, "Ook bij kortsluiting, die je eerder zag, wordt de stroom te groot en grijpt de zekering in. "
                       "De zekering staat in serie met de hele groep: alle stroom gaat erdoorheen.")
         self.doe(d, m.Indicate(stroom, color=ACCENT))
         d = zeg(self, "Een zekering beschermt dus de draden, tegen te veel stroom. Maar wie beschermt jou?")
@@ -241,7 +241,6 @@ class Thuis(Les):
         d = zeg(self, "Samengevat:")
         self.play(m.FadeOut(rijen_o), m.FadeOut(legenda_o), run_time=SNEL)
         self.hud(samen[0])
-        self.play(m.FadeIn(samen[0]), m.LaggedStart(*(self.toon(r)[0] for r in samen[1]), lag_ratio=0.3),
-                  run_time=max(d, 4))
+        self.na_elkaar(samen[1], max(d, 4), m.FadeIn(samen[0]))
         zeg(self, "")
         self.wait(3)

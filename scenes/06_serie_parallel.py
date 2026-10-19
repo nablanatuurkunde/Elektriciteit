@@ -253,7 +253,7 @@ class SerieParallel(Les):
         d = zeg(self, "En omdat de weerstand bijna nul is, wordt de stroom enorm groot. Dit heet kortsluiting.")
         self.doe(d, *self.toon(uitleg))
         d = zeg(self, "De draden en de batterij worden dan heet, en er kan brand ontstaan. Daarom zitten er in huis "
-                      "zekeringen. Daarover meer in de video over elektriciteit thuis.")
+                      "zekeringen. Daarover straks meer, bij elektriciteit in huis.")
         self.doe(d, m.Indicate(kortsluitdraad, color=ACCENT))
         zeg(self, "")
         self.wait(2)

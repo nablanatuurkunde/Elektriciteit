@@ -186,7 +186,6 @@ class Transformator(Les):
         self.wait(max(d - SNEL, 0))
         d = zeg(self, "Samengevat:")
         self.hud(achter_s)
-        self.play(m.FadeIn(achter_s), m.LaggedStart(*(self.toon(r)[0] for r in regels), lag_ratio=0.3),
-                  run_time=max(d, 3))
+        self.na_elkaar(regels, max(d, 3), m.FadeIn(achter_s))
         zeg(self, "")
         self.wait(3)

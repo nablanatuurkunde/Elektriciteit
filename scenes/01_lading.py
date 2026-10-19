@@ -166,7 +166,7 @@ class Lading(Les):
         self.add(vrij)
         self.doe(d - SNEL - TRAAG, m.FadeIn(vrij))
         d = zeg(self, "Zonder batterij schieten die vrije elektronen kriskras door elkaar, maar gemiddeld gaan ze "
-                      "nergens heen. Dat verandert als je er een batterij op aansluit: dat zie je in de volgende video.")
+                      "nergens heen. Dat verandert als je er een batterij op aansluit: wat er dan gebeurt, zie je zo meteen.")
         self.move_camera(theta=-50 * m.DEGREES, run_time=d, rate_func=m.linear)
 
         # ── Ladingsbehoud + samenvatting ──
@@ -180,7 +180,6 @@ class Lading(Les):
         vrij.clear_updaters()
         self.play(m.FadeOut(ionen), m.FadeOut(vrij), run_time=SNEL)
         self.hud(samen[0])
-        self.play(m.FadeIn(samen[0]), m.LaggedStart(*(self.toon(r)[0] for r in samen[1]), lag_ratio=0.3),
-                  run_time=max(d - SNEL, 4))
+        self.na_elkaar(samen[1], max(d - SNEL, 4), m.FadeIn(samen[0]))
         zeg(self, "")
         self.wait(3)

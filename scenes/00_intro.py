@@ -2,8 +2,8 @@
 
 In de stijl van de reeks: de tafellamp (bouwstenen/modellen.py) en een 3D-lichtknopje aan de muur, met een snoer
 ertussen. Knopje om → lamp meteen aan. Inzoomen op het snoer tot het koperrooster met vrije elektronen uit video 1;
-één elektron volgen: het schuift maar een paar honderdste millimeter per seconde op, en doet over 3 meter snoer
-meer dan tien uur (driftsnelheid ≈ I / (n·A·e) ≈ 0,05 mm/s). De vraag blijft staan (het antwoord komt in de
+één elektron volgen: het schuift maar een paar honderdste millimeter per seconde op, en doet over een halve meter snoer
+zo'n drie uur (driftsnelheid ≈ I / (n·A·e) ≈ 0,05 mm/s). De vraag blijft staan (het antwoord komt in de
 waterkring-video). Dan het overzicht van de reeks naast het schema uit video 2–5. Daarna volgt in de film het
 Nabla-logo (assets/Intro.mov, zie film.py).
 
@@ -82,13 +82,13 @@ class Intro(Les):
         d = zeg(self, "Meteen. Je denkt er nooit over na.")
         self.move_camera(theta=-78 * m.DEGREES, run_time=d, rate_func=m.linear)
 
-        # ═══ Het snoer: 3 meter ═══
+        # ═══ Het snoer: een halve meter ═══
         vloerstuk = m.Line(SNOER[1], SNOER[2])
         maat = m.VGroup(m.Brace(m.Line([SNOER[1][0], 0, 0], [SNOER[2][0], 0, 0]), m.DOWN, color=TEKST),
-                        tekst("3 m", KOP))
+                        tekst("0,5 m", KOP))
         maat[1].next_to(maat[0], m.DOWN, buff=0.15)
         staand(maat).move_to(vloerstuk.get_center() + [0, -0.25, 0.55])  # rechtop voor de muur, boven het snoer
-        d = zeg(self, "Maar hier zit iets vreemds. Tussen het knopje en de lamp zit zo'n 3 meter snoer.")
+        d = zeg(self, "Maar hier zit iets vreemds. Tussen het knopje en de lamp zit zo'n halve meter snoer.")
         self.move_camera(phi=82 * m.DEGREES, theta=-90 * m.DEGREES, zoom=1.15, frame_center=[-0.5, MUUR_Y, 0.9],
                          run_time=d * 0.6)
         self.doe(d * 0.4, m.GrowFromCenter(maat[0]), m.FadeIn(maat[1]), duur=d * 0.4)
@@ -117,16 +117,16 @@ class Intro(Les):
         kaart.add(label("knopje", kaart_k, m.LEFT), label("lamp", kaart_l, m.RIGHT))
         uren = m.ValueTracker(0)
         stip = m.Dot(radius=0.09, color=ELEKTRON_KLEUR).add_updater(
-            lambda s: s.move_to(kaart[1].point_from_proportion(min(uren.get_value() / 12, 1))))
+            lambda s: s.move_to(kaart[1].point_from_proportion(min(uren.get_value() / 3, 1))))
         d = zeg(self, "Loopt er stroom, dan schuiven die elektronen allemaal een kant op. Maar heel langzaam: "
                       "gemiddeld maar een paar honderdste millimeter per seconde.")
         self.hud(kaart, stip)
         self.doe(d, m.FadeIn(volg), m.FadeIn(ring), m.FadeIn(kaart), m.FadeIn(stip), duur=1.5)
 
         klok = klokje(uren).move_to([1.8, 1.4, 0])
-        d = zeg(self, "Een elektron dat bij het knopje vertrekt, doet er meer dan tien uur over om bij de lamp te komen.")
+        d = zeg(self, "Een elektron dat bij het knopje vertrekt, doet er zo'n drie uur over om bij de lamp te komen.")
         self.play(*self.toon(klok), run_time=SNEL)
-        self.play(uren.animate.set_value(11.5), run_time=max(d - SNEL, 4), rate_func=m.linear)  # 1 uur … 11 uur
+        self.play(uren.animate.set_value(3), run_time=max(d - SNEL, 4), rate_func=m.linear)  # 0,5 m / 0,05 mm/s ≈ 3 uur
 
         # ═══ Toch brandt de lamp meteen: de vraag ═══
         d = zeg(self, "Toch brandt de lamp binnen een fractie van een seconde.")
@@ -145,7 +145,7 @@ class Intro(Les):
         d = zeg(self, "Denk je het antwoord al te weten? Pauzeer even en probeer het voor jezelf te formuleren.")
         self.wait(d + 1)
         d = zeg(self, "Zo niet, geen probleem: dat is precies waar we naartoe werken. "
-                      "In de video over de waterkring komt het antwoord.")
+                      "Straks, bij de waterkring, komt het antwoord.")
         self.wait(d)
 
         # ═══ De reeks: het schema uit de video's, met het overzicht ═══
@@ -161,10 +161,9 @@ class Intro(Les):
         self.doe(d - SNEL, m.FadeIn(sch["min_"]), m.FadeIn(sch["plus"]), m.FadeIn(sch["symbolen"]),
                  m.FadeIn(sch["gloed"]), m.FadeIn(sch["labels"]), m.FadeIn(pijlen))
         d = zeg(self, "Eerst lading, de waterkring en stroom. Dan spanning en weerstand.")
-        self.hud(*lijst)
-        self.play(m.LaggedStart(*(m.FadeIn(r, shift=0.2 * m.RIGHT) for r in lijst[:5]), lag_ratio=0.5), run_time=d)
+        self.na_elkaar(lijst[:5], d)
         d = zeg(self, "Daarna schakelingen in serie en parallel, vermogen, sensoren, en de elektriciteit in je eigen huis.")
-        self.play(m.LaggedStart(*(m.FadeIn(r, shift=0.2 * m.RIGHT) for r in lijst[5:]), lag_ratio=0.5), run_time=d)
+        self.na_elkaar(lijst[5:], d)
         d = zeg(self, "Aan het eind kun je elke schakeling op het vwo-examen ontleden, en snap je ook waarom het werkt.")
         self.doe(d, m.Indicate(sch["symbolen"][1], color=LICHT, scale_factor=1.15))
 
